@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>main</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="css/mui.min.css">
+		<link rel="stylesheet" href="css/app.icon.css"/>
+		<link rel="stylesheet" href="css/biz/app.css"/>
+		<link rel="stylesheet" href="css/biz/main.css"/>
+	</head>
+	<body>
+		<header id="header" class="mui-bar mui-bar-nav app-header">
+		    <h1 id="title" class="mui-title">收件</h1>
+		    <div id="upload_box" class="upload-box toolbox none">
+		    	<button id="span_upload_images_count" type="button" class="mui-btn mui-btn-outlined"></button>
+		    	<button id="btn_clear_upload" type="button" class="mui-btn mui-btn-outlined app-btn-active pr">清空</button>
+		    </div>
+		    <button id="OnshelfStatistics" class="mui-pull-right mui-btn-link none">上架统计</button>
+		</header>
+		<nav class="mui-bar mui-bar-tab">
+		   <a id="receiving" class="mui-tab-item mui-active" href="pages/receiving.html">
+		        <span class="mui-icon app-nav-icon icon-shouhuo"></span>
+		        <span class="mui-tab-label">收件</span>
+		    </a>
+		    <a id="pickup" class="mui-tab-item mui-active" href="pages/pickup.html">
+		        <span class="mui-icon app-nav-icon icon-qujian"></span>
+		        <span class="mui-tab-label">取件</span>
+		    </a>
+		    <a id="shelves" class="mui-tab-item" href="pages/shelves.html">
+		        <span class="mui-icon app-nav-icon icon-shangjia"></span>
+		        <span class="mui-tab-label">上架</span>
+		    </a>
+		    <a id="meterial" class="mui-tab-item" href="pages/material.html">
+		        <span class="mui-icon mui-icon-compose"></span>
+		        <span class="mui-tab-label">建料</span>
+		    </a>
+		    <a id="query" class="mui-tab-item" href="pages/query.html">
+		        <span class="mui-icon mui-icon-search top-none"></span>
+		        <span class="mui-tab-label">查询</span>
+		    </a>
+		    <!--<a id="setting" class="mui-tab-item" href="pages/setting.html">
+		        <span class="mui-icon mui-icon-gear top-none"></span>
+		        <span class="mui-tab-label">设置</span>
+		    </a>-->
+		    <a id="more" class="mui-tab-item" href="pages/more.html">
+		        <span class="mui-icon mui-icon-more top-none"></span>
+		        <span class="mui-tab-label">更多</span>
+		    </a>
+		</nav>
+		<div class="mui-content"></div>
+		<script src="js/mui.min.js"></script>
+		<script src="js/immersed.js"></script>
+		<script src="js/biz/biz.js"></script>
+		<script src="js/biz/app.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			;(function(){
+				// mui初始化
+		  		mui.init();
+		  		var _back = mui.back();
+		  		// 重写返回事件
+		  		mui.back = function(){
+		  			var view = plus.webview.getLaunchWebview();
+		  			mui.fire(view,'closeApp');
+		  		};
+		  		// 遮罩层
+		  		var mask = mui.createMask();
+		  		// 子页面
+		  		var subPages = [
+					App.webviews.receiving.url, // 收件功能
+					App.webviews.pickup.url,    // 取件功能
+					App.webviews.shelves.url,   // 上架功能
+					App.webviews.material.url,  // 上架功能
+					App.webviews.query.url,  // 上架功能
+//					App.webviews.setting.url,    // 设置功能
+					App.webviews.more.url    // 更多功能
+		  		];
+		  		// 子页面样式
+		  		var subPageStyle = { 
+		  			top: '44px',
+					bottom: '51px'
+		  		};
+		  		var aniShow = {};
+		  		// 当前激活选项卡
+		  		var activeTab = subPages[0],
+		  			title = document.getElementById('title'),
+		  			uploadBox = document.getElementById('upload_box'),
+		  			OnshelfStatistics = document.getElementById('OnshelfStatistics');
+		  		// 选项卡点击事件
+		  		mui('.mui-bar-tab').on('tap','a',function(evt){
+		  			var targetTab = this.getAttribute('href');
+		  			if(targetTab == activeTab)
+		  			{
+		  				return;
+		  			}
+		  			if(this.id == 'meterial'){
+		  				uploadBox.classList.remove('none'); // 显示上传信息
+		  			}else{
+		  				uploadBox.classList.add('none'); // 隐藏上传信息
+		  			}
+		  			if(this.id == 'query'){
+		  				OnshelfStatistics.classList.remove('none'); // 显示上架数量统计
+		  			}else{
+		  				OnshelfStatistics.classList.add('none'); // 隐藏上架数量统计
+		  			}
+	  				title.innerHTML = this.querySelector('.mui-tab-label').innerHTML;//修改标题
+		  			// 显示当前选项卡对应的页面内容
+		  			// 如果是ios 或者  目标页面不是第一次显示，则直接显示，不需要动画效果
+		  			if(mui.os.ios || aniShow[targetTab])
+		  			{
+		  				plus.webview.show(targetTab);
+		  			}else
+		  			{
+		  				var temp = {};
+		  				temp[targetTab] = 'true';
+		  				mui.extend(aniShow,temp);
+		  				// 动画显示目标选项卡对应的页面
+		  				plus.webview.show(targetTab,'fade-in',300);
+		  			}
+		  			// 隐藏当前的活动页面
+		  			plus.webview.hide(activeTab);
+		  			// 切换活动的选项卡为点击的目标选项卡
+		  			activeTab = targetTab;
+		  		});
+		  		// html+环境初始化完毕
+		  		mui.plusReady(function(){
+		  			var self = plus.webview.currentWebview();
+		  			for(var i in subPages){
+						var temp = {},
+							subWebview = plus.webview.create(subPages[i],subPages[i],subPageStyle);
+						if(i > 0){
+							// 非第一个页面隐藏
+							subWebview.hide();
+						}else{
+							temp[subPages[i]] = 'true';
+							mui.extend(aniShow,temp);
+						}
+						// 添加子页面
+						self.append(subWebview);
+					}
+		  			var statisticsPage = mui.preload({
+						"id": 'queryStatistics',
+						"url": './pages/queryStatistics.html'
+					});
+					//上架数量统计
+					var statisticsBtn = document.getElementById('OnshelfStatistics');
+					//settingButton.style.display = settings.autoLogin ? 'block' : 'none';
+					statisticsBtn.addEventListener('tap', function(event) {
+						mui.openWindow({
+							id: 'queryStatistics',
+							show: {
+								aniShow: 'pop-in'
+							},
+							styles: {
+								popGesture: 'hide'
+							},
+							waiting: {
+								autoShow: false
+							}
+						});
+					});
+		  		});
+		  		var clearUploadBtn = document.getElementById('btn_clear_upload'),
+		  			uploadGridCountEle = document.getElementById('span_upload_images_count'),
+		  			uploadStatusEle = document.getElementById('span_upload_progress');
+		  		initUploadToolbarStatus();// 初始化	
+		  		// 清空上传数据事件 
+				clearUploadBtn.addEventListener('tap',function(evt){
+					mui.confirm('确定要清空吗？','',['确定','取消'],function(e) {
+						if (e.index == 0) { 
+							mui.fire(plus.webview.getWebviewById(App.webviews.material.id),'refreshUpload',{});
+							updateNavbarStatus('hide');       // 隐藏清空按钮
+//							updateUploadProgressMessage('','hide');// 清空和隐藏上传进度信息
+						}
+					})
+				});	
+		  		//自定义返回首页事件，模拟点击“首页选项卡” 
+				document.addEventListener('gohome', function() {
+					var defaultTab = document.getElementById("defaultTab");
+					//模拟首页点击
+					mui.trigger(defaultTab, 'tap');
+					//切换选项卡高亮
+					var current = document.querySelector(".mui-bar-tab>.mui-tab-item.mui-active");
+					if (defaultTab !== current) { 
+						current.classList.remove('mui-active');
+						defaultTab.classList.add('mui-active');
+					}
+				});
+				// 更新清空按钮的状态
+				window.addEventListener('updateNavbarStatus',function(evt){
+					updateNavbarStatus(evt.detail.type || '',evt.detail.imageCount);
+				});
+				window.addEventListener('initPage',function(){
+					mui('.mui-bar-tab a.mui-tab-item').each(function(){
+						if(this.getAttribute('id') == 'receiving'){
+							mui.trigger(this,'tap');
+							this.classList.add('mui-active');
+						}else{
+							this.classList.remove('mui-active');
+						}
+					});
+					mui.fire(plus.webview.getWebviewById(App.webviews.setting.id),'refreshUserInfo',{});  // 刷新用户信息
+				});
+				// 显示遮罩层
+				window.addEventListener('showMask',function(evt){
+					mask ? mask.show() : null;
+				});
+				// 关闭遮罩层
+				window.addEventListener('closeMask',function(evt){
+					mask ? mask.close() : null;
+				});
+				// 重置子页面样式
+				window.addEventListener('resetSubWebviewStyle',function(evt){
+					resetSubWebviewStyle();
+				});
+				function updateNavbarStatus(type,count){
+					var disType = type == 'show' ? 'block' : 'none';
+					// 清空按钮的隐藏或显示
+					clearUploadBtn ? clearUploadBtn.style.display = disType : null;
+					// 总图片数
+					uploadGridCountEle ? uploadGridCountEle.style.display = disType : null;
+					uploadGridCountEle ? uploadGridCountEle.innerHTML = 
+						(count ? '共' + count + '张' : '') : null;
+				}
+				function updateUploadProgressMessage(msg,type){
+					if(type == 'hide'){
+						uploadStatusEle.style.display = 'none';
+					}else{
+						uploadStatusEle.style.display = 'block';
+					}
+					uploadStatusEle.innerHTML = msg || '';
+				}
+				function initUploadToolbarStatus(){
+					clearUploadBtn ? clearUploadBtn.style.display = 'none' : '';
+					uploadStatusEle ? uploadStatusEleuploadStatusEle.style.display = 'none' : '';
+				}
+				function resetSubWebviewStyle(){
+					plus.navigator.setFullscreen(false);
+					var children = plus.webview.currentWebview().children();
+					if(children && children.length){
+						mui.each(children,function(i,wv){
+							wv.setStyle(subPageStyle);
+						});
+					}
+				}
+			})();
+		</script>
+	</body>
+</html>

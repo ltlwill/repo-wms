@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>拣货下架</title> 
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/biz/app.css">
+		<link rel="stylesheet" href="../css/app.icon.css">
+		<link rel="stylesheet" href="../css/biz/picking_off.css">
+	</head>
+	<style>
+	</style>
+	<body>
+		<header class="mui-bar mui-bar-nav app-header">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">拣货下架</h1>
+		</header>
+		<!-- 内容区域 -->
+		<div class="mui-content">
+			<div class="form-container">
+				<form class="mui-input-group">
+					<div class="mui-input-row">
+				        <label>配货单号</label>
+				    	<input id="pickup_code" name="pickup_code" type="text" class="mui-input-clear" tabindex="1" placeholder="请输入配货单号">
+				    </div>
+				    <div class="mui-input-row">
+				        <label>SKU</label>
+				        <input id="sku" name="sku" type="text" readonly="readonly" class="mui-input-clear" tabindex="2" placeholder="请输入SKU">
+				    </div>
+				</form>
+				<div class="message">
+			    	<span id="message"></span>	
+		    	</div>
+			</div>
+		</div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/biz/app.js"></script>
+	<script src="../js/biz/biz.js"></script>
+	<script>
+		var subId = App.webviews.pickingOffSub.id,
+			subUrl = 'picking_off_sub.html';
+		mui.init({
+			swipeBack:true, //启用右滑关闭功能
+			subpages: [{
+				id: subId,
+				url: subUrl,
+				styles: {
+					top: '165px',
+					bottom: '0px'
+				}
+			}]
+		});
+		// 取件管理对象
+		var PickingOffMgr = mui.extend(true,window.Biz,{
+			options: {
+			},
+			init: function(){
+				PickingOffMgr.initEles();
+				PickingOffMgr.initDatas();
+				PickingOffMgr.bindEvent();
+			},
+			initEles: function(){
+				this.pickupCodeEle = document.querySelector("#pickup_code"); 
+				this.skuEle = document.querySelector("#sku"); 
+				this.skuReg = new RegExp('^[0-9]{8}$');
+				this.subWebview = this.getSubWebview();
+			},
+			initDatas: function(){
+				this.pickupCacheData = [];
+				this.itemsKeyData = {};
+				this.itemsIndexKvData = {};
+				this.skuKvData = {};
+			},
+			bindEvent: function(){
+				var me = this;
+				document.addEventListener('keyup',function(evt){
+					if(me.isEnterKey(evt)){
+						if(evt.srcElement.id == 'pickup_code'){
+							me.doPickupCodeInputBusiness();
+						}else if(evt.srcElement.id == 'sku'){
+							me.doSkuInputBusiness();
+						}
+					}else{
+						evt.stopPropagation();
+						evt.preventDefault();
+					}
+				});
+				window.addEventListener('showMessage',function(evt){
+					me.showMessage(evt.detail.msg,evt.detail.type);
+				});
+			},
+			doPickupCodeInputBusiness: function(){
+				var me = this,params = me.getRequestParams(),
+					msg = '根据配货单号：' + params.pickup_code;
+				if(!params.pickup_code){
+					me.pickupCodeEle.select();
+					me.showMessage('请输入配货单号','error');
+					return false;
+				}
+				mui.doGet(App.createUrl("/track/getPickupingDetail"),params,function(result){
+					result = result || {};
+					if(result.errcode == '0'){
+						if(result.data && result.data.length){
+							me.setSkuEleReadonlyStatus(false);
+							me.pickupCacheData = result.data || [];
+							me.skuEle.select();
+							for(var i=0;i<result.data.length;i++){
+								me.skuKvData[result.data[i].sku] = result.data[i];
+								me.itemsIndexKvData[me.getItemKey(result.data[i])] = i;
+							}
+							// 加载表格数据
+							me.reloadTableData(result.data);
+						}else{
+							me.pickupCodeEle.select();
+							me.setSkuEleReadonlyStatus(true);
+							me.showMessage(msg + '没有查询到数据','error');
+						}
+					}else{
+						me.pickupCodeEle.select();
+						me.setSkuEleReadonlyStatus(true);
+						me.showMessage(msg + '获取数据失败' + (result.errmsg ? (',' + result.errmsg) : ''),'error');
+					} 
+				},function(xhr,a,b,c){
+					me.pickupCodeEle.select();
+					var errMsg = me.getServerErrorMsg(xhr);
+					me.showMessage(msg + '获取数据失败' + (errMsg ? (',' + errMsg) : ''),'error');
+				},{'beforeSend': function(){ 
+					me.resetCascadeInfo();
+					plus.nativeUI.showWaiting();
+				},'complete': function(){
+					plus.nativeUI.closeWaiting();
+				}});
+			},
+			resetCascadeInfo: function(){
+				var me = this;
+				me.pickupCacheData = [];
+				me.itemsKeyData = {};
+				me.itemsIndexKvData = {};
+				me.skuKvData = {};
+				me.reloadTableData();
+				me.skuEle.value = '';
+				me.setSkuEleReadonlyStatus(true);
+				me.showMessage('','clear');
+			},
+			doSkuInputBusiness: function(){
+				var me = this,
+					params = this.getRequestParams(),
+					sku = params.sku || '';
+				me.showMessage('','clear');	
+				if(!params.pickup_code){
+					me.pickupCodeEle.select();
+					me.showMessage('请输入配货单号','error');
+					return false; 
+				}
+				if(!this.skuReg.test(sku)){
+					this.skuEle.select();
+					me.showMessage('请输入有效的SKU','error');
+					return false; 
+				}
+				var items = this.getSkuDataFromPickupResult(sku);
+				if(!items || !items.length){
+					this.skuEle.select();
+					if(this.skuKvData[sku]){
+						me.showMessage('此SKU已拣货','error');
+					}else{
+						me.showMessage('当前配货单中不存在此SKU','error');
+					}
+					return false;
+				}
+				if(items.length > 1){ // 需要选择
+					var btns = [],item,key,itemsKV = {};
+					for(var i=0,len=items.length;i<len;i++){
+						item = items[i] || {};
+						key = me.getItemKey(item);
+						btns.push({'title':key,'value':key,'color':'#19bcff'});
+						itemsKV[key] = mui.extend(true,item,{'key': key});
+					}
+					plus.nativeUI.actionSheet({title:"请选择",cancel:"取消",buttons:btns},function(e){ 
+						if(e.index > 0){
+							var bt = btns[e.index - 1],
+								_item = itemsKV[bt.value];
+								me.skuEle.select();
+							if(_item){
+								me.doPickupItem(_item);
+							}
+						}
+					});
+				}else{
+					me.doPickupItem(mui.extend(true,items[0],{'key': me.getItemKey(items[0])}));
+				}
+			},
+			getItemKey: function(item){
+				return '货架:' + item.warehouse.trim() + ';SKU:' + item.sku.trim();
+			},
+			doPickupItem: function(item){
+				var me = this,
+					params = me.getRequestParams();
+				mui.doPost(App.createUrl("/track/markPickupDetail"),mui.extend(true,params,{'warehouse': item.warehouse}),function(result){
+					result = result || {};
+					me.skuEle.select();
+					if(result.errcode == '0'){
+						me.refreshTableData(item,me.itemsIndexKvData[item.key]);
+					}else if(result.errcode == '2'){
+						me.showMessage('SKU：' + params.sku + result.errmsg,'error');
+					}else{
+						me.showMessage('拣货失败' + (result.errmsg ? (',' + result.errmsg) : ''),'error');
+					} 
+				},function(xhr,a,b,c){
+					me.skuEle.select();
+					var errMsg = me.getServerErrorMsg(xhr);
+					me.showMessage('拣货失败' + (errMsg ? (',' + errMsg) : ''),'error');
+				},{'beforeSend': function(){ 
+					plus.nativeUI.showWaiting();
+				},'complete': function(){
+					plus.nativeUI.closeWaiting();
+				}});
+			},
+			refreshTableData: function(item,rowIndex){
+//				mui.fire(this.getSubWebview(),'addTableRowData',{'row': JSON.stringify(item)});
+				item = mui.extend(true,item,{'mark': true}); // 打上mark标识
+				mui.fire(this.getSubWebview(),'updateTableRowData',{'row': JSON.stringify(item),'rowIndex': rowIndex});
+				this.itemsKeyData[item.key] = true; // 标记为使用过
+				this.skuEle.select();
+			},
+			reloadTableData: function(rows){
+				mui.fire(this.getSubWebview(),'loadTableData',{'rows': rows || []});
+			},
+			getSkuDataFromPickupResult: function(sku){
+				if(!this.pickupCacheData || !this.pickupCacheData.length){ 
+					return [];
+				}
+				var rows = this.pickupCacheData,items = [],itemKey;
+				for(var i=0,len=rows.length;i<len;i++){
+					itemKey = this.getItemKey(rows[i]);
+					if(rows[i].sku == sku && !this.itemsKeyData[itemKey]){
+						items.push(rows[i]);
+					}
+				}
+				return items;
+			},
+			getRequestParams: function(){
+				var pickupCode = this.pickupCodeEle.value ? this.pickupCodeEle.value.trim() : '',
+					sku = this.skuEle.value ? this.skuEle.value.trim() : '';
+				return {'pickup_code': pickupCode,'sku': sku};
+			},
+			setSkuEleReadonlyStatus: function(readonly){
+				if(readonly){
+					this.skuEle.setAttribute('readonly',true);
+				}else{
+					this.skuEle.removeAttribute('readonly');
+				}
+			},
+			getSubWebview: function(){
+				if(!this.subWebview){
+					return plus.webview.getWebviewById(subId);
+				}
+				return this.subWebview;
+			}
+		});
+		// h5+环境初始化完成
+		mui.plusReady(function(){
+			PickingOffMgr.ready();
+		});
+	</script>
+</html>

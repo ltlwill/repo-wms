@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>拣货下架列表</title> 
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/biz/app.css" />
+		<link rel="stylesheet" href="../css/biz/list.grid.css" />
+	</head>
+	<style>
+	</style>
+	<body>
+		<div class="mui-content">
+		    <ul id="table"></ul>
+		</div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/biz/app.js"></script>
+	<script src="../js/biz/biz.js"></script>
+	<script src="../js/biz/list.grid.js"></script>
+	<script>
+		var pId = 'picking_off.html';
+		mui.init({
+			swipeBack:true //启用右滑关闭功能
+		});
+		// 取件管理对象
+		var PickingOffSubMgr = mui.extend(true,window.Biz,{
+			options: {
+			},
+			init: function(){
+				PickingOffSubMgr.initEles();
+				PickingOffSubMgr.bindEvent();
+			},
+			initEles: function(){
+				this.tableEle = mui('#table');
+				this.tableCols = [
+					{'field': 'quantity','title': '数量',hidden: true}, // 隐藏列
+					{'field': 'mark','title': '是否标记',hidden: true},  // 隐藏列
+					{'field': 'warehouse','title': '货架号'},
+					{'field': 'sku','title': 'SKU'},
+					{'field': '_quantity','title': '数量',formatter: function(val,row){
+						return row.quantity + (row.mark ? '<span class="mui-icon mui-icon-checkmarkempty" style="color:#4cd964;"></span>' : '');
+					}}];
+				this.loadTableData();	
+			},
+			bindEvent: function(){
+				var me = this;
+				window.addEventListener('getTableData',function(evt){
+					return me.getTablesData();
+				});
+				window.addEventListener('loadTableData',function(evt){
+					return me.loadTableData(evt.detail ? evt.detail.rows || [] : []);
+				});
+				window.addEventListener('addTableRowData',function(evt){
+					var rowStr = evt.detail ? evt.detail.row : '';
+					if(!rowStr){
+						return false;
+					}
+					me.addTableRowData(JSON.parse(rowStr));
+				});
+				window.addEventListener('updateTableRowData',function(evt){
+					var rowIndex = evt.detail ? evt.detail.rowIndex : '',
+						rowStr = evt.detail ? evt.detail.row : '';
+					if(!rowStr){
+						return false;
+					}
+					return me.updateTableRowData(rowIndex,JSON.parse(rowStr));
+				});
+			},
+			loadTableData: function(rows){
+				var options = {
+					'data': rows,
+					'columns': this.tableCols,
+					'rowFormatter': function(row,rowEle){
+						if(row && row.mark){
+							rowEle ? rowEle.style.display = 'none' : ''; // 如果已经标记过，则隐藏掉此行
+						}
+					}
+				};
+				this.tableEle.listGrid(options);
+			},
+			getTablesData: function(){
+				return this.tableEle.listGrid('getRows');
+			},
+			addTableRowData: function(row){
+				var currRows = this.getTablesData() || [];
+				currRows.splice(0,0,row); // 添加到最前面
+				this.loadTableData(currRows);
+			},
+			updateTableRowData: function(rowIndex,row){
+				this.tableEle.listGrid('updateRow',rowIndex,row);
+				var rows = this.tableEle.listGrid('getRows'),unMarkCount = 0,msg;
+				if(rows && rows.length){
+					for(var i=0;i<rows.length;i++){
+						if(!rows[i].mark){
+							unMarkCount ++;
+						}
+					}
+					msg = (unMarkCount == 0) ? '此配货单已全部拣货' : 'SKU:' + row.sku + ' 拣货成功';
+					mui.fire(this.getPWebview(),'showMessage',{'msg': msg,'type': 'success'});
+				}
+			},
+			getPWebview: function(){
+				return plus.webview.getWebviewById(pId);
+			},
+		});
+		// h5+环境初始化完成
+		mui.plusReady(function(){
+			PickingOffSubMgr.ready(); 
+		});
+	</script>
+</html>

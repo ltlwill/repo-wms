@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>上架数量统计查询</title> 
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/mui.picker.min.css">
+		<link rel="stylesheet" href="../css/biz/app.css" />
+		<link rel="stylesheet" href="../css/app.icon.css">
+		<link rel="stylesheet" href="../css/biz/list.grid.css">
+		<link rel="stylesheet" href="../css/biz/query.css"/>
+	</head>
+	<style>
+		.table_list{padding:0 15px 40px;font-size:16px;}
+		.table_list h3{padding-top:10px;font-size:16px;font-weight:normal;color:#333;}
+		.table_list h3 span{font-size:14px;color:#999;}
+		.table_list table{width:100%;background:#fff;color:#666;font-size:16px;}
+		.table_list td{border: 1px solid #ccc;text-align:right;padding:5px;}
+		.default_msg{background-color:#fff;color:#666;text-align:center;padding:5px 10px;font-size:14px;color:#dd524d;}
+	</style>
+	<body>
+		<header class="mui-bar mui-bar-nav app-header">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">上架数量统计查询</h1>
+		</header>				
+		<!-- 内容区域 -->
+		<div class="mui-content">
+			
+				<div id="slider" class="mui-slider">
+					<!--<div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+						<a class="mui-control-item mui-active" href="#itemContent1" type="1">上架统计查询</a>
+					</div>
+					<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-3"></div>-->
+					<div class="mui-slider-group app-slider-group">
+						<div id="itemContent1" class="mui-slider-item mui-control-content mui-active">
+							<div id="scroll1" class="mui-scroll-wrapper">
+								<div class="mui-scroll">
+									<form class="mui-input-group">
+										<div class="mui-input-row">
+											<button class="mui-btn mui-btn-block dropdown-button" type='button' storeHouse="SZ">深圳仓</button>
+									    	<span class="mui-icon mui-icon-arrowdown dropselect"></span>
+										</div>
+										<div class="mui-input-row">
+										    <input name="userName" type="text" class="mui-input-clear" placeholder="请输入上架人名称">
+										</div>
+										<!--<div class="mui-input-row">
+										    <input name="sku" type="text" class="mui-input-clear" placeholder="请输入SKU">
+										</div>-->
+							    		<div class="mui-row mui-input-row time-input-row">
+							    			<div class="mui-col-sm-6 mui-col-xs-6 input-wrapper">
+									    		<div class="mui-input-row">
+											        <input id="startTime" name="from" type="text" class="mui-input-clear date-input" readonly placeholder="选择起始日期" data-options='{"value":"2017-08-05"}'/>
+											    </div>
+									        </div>
+									        <div class="mui-col-sm-6 mui-col-xs-6 input-wrapper">
+									    		<div class="mui-input-row">
+											        <input id="endTime" name="to" type="text" class="mui-input-clear date-input" readonly placeholder="选择截止日期"/>
+											    </div>
+									        </div>
+									    </div>
+								    </form>
+								    <div class="block-btn-wrapper">
+										<button id="btn_search" type="button" title="上架统计查询" class="mui-btn mui-btn-blue mui-btn-block submit-btn">查询</button>							    	
+								    </div>
+								    
+								    <div class="table_list">
+										<h3 class="mui-text-center" id="tb_head"></h3>
+										<div id="queryResult"></div>
+									</div>								    
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+		</div>
+	</body>
+	<script src="../js/mui.js"></script>
+	<script src="../js/mui.picker.min.js"></script>
+	<script src="../js/biz/app.js"></script>
+	<script src="../js/biz/list.grid.js"></script>
+	<script src="../js/biz/biz.js"></script>
+	<script>
+		mui.init({
+			swipeBack: false
+		});
+		mui.ready(function(){
+			window.onresize = function(){
+				calcContentHeight();
+			};
+//			mui.trigger(window,'resize');
+			calcContentHeight();
+			function calcContentHeight(){
+				var wh = window.innerHeight,
+					items = document.querySelectorAll('.mui-slider-group > .mui-slider-item');
+				mui.each(items,function(i,o){
+					this.style.height = (wh - 40) + 'px';
+				});
+			}
+		});
+		// 查询管理对象
+		var QueryMgr = mui.extend(true,window.Biz,{
+			options: {
+			},
+			init: function(){
+				QueryMgr.initEles();
+				QueryMgr.initElesData();
+				QueryMgr.bindEvent();
+			},
+			initEles: function(){
+				this.scanResultEle = mui("#scan_result");
+				this.scanResultTableEle = mui("#scan_result_table");
+				this.scanMsgEle = mui('#scan_result_message');
+				mui('.mui-scroll-wrapper').scroll({indicators: true});//是否显示滚动条
+				this.storeHousePicker = new mui.PopPicker();
+				this.skuReg = new RegExp('^[0-9]{8}$');
+			},
+			initElesData: function(){ 
+				var user = App.getUserInfo() || {};
+				mui.each(mui('input[name="userName"]'),function(){
+					this.value = user ? user.nickName : '';
+				});
+				var storeHouseData = [
+					{'value': 'SZ','text': '深圳仓'},
+					{'value': 'HB','text': '松滋仓'},
+					{'value': 'UK','text': '英国仓'},
+					{'value': 'US','text': '美国仓'},
+					{'value': 'MD','text': '门店'}, 
+				];
+				this.storeHousePicker.setData(storeHouseData);
+			},
+			bindEvent: function(){
+				var me = this;
+//				mui.each(mui('.mui-slider-group input.date-input'),function(){
+//					this.value = me.formatDate();
+//				});
+				document.getElementById('startTime').value=me.getBeforeDate(1);
+				document.getElementById('endTime').value=me.formatDate();
+				mui('.mui-slider-group').on('tap','input.date-input',function(){
+					me.doSelectDate(this);
+				});
+				var btns = document.querySelectorAll('button.submit-btn');
+				mui.each(btns,function(){
+					this.addEventListener('tap',function(){
+						me.doSearch(this);
+					});
+				});
+				me.doSearch(btns[0]);
+				mui.each(document.querySelectorAll('button.dropdown-button'),function(){
+					this.addEventListener('tap',function(evt){
+						var t = this;
+						me.storeHousePicker.show(function(items) {
+							t.setAttribute('storeHouse',items[0].value);
+							t.innerText = items[0].text;
+						});	
+					},false);
+				});
+				mui.each(document.querySelectorAll('span.dropselect'),function(){
+					this.addEventListener('tap',function(evt){
+						mui.trigger(this.parentNode.querySelector('button.dropdown-button'),'tap');
+					},false);
+				});
+			}, 
+			doSelectDate: function(ele){
+				var me = this,opts = {"type":"date","value":ele.value};
+				if(!ele._picker){
+					ele._picker = new mui.DtPicker(opts);
+				}
+				ele._picker.show(function(rs) {
+					ele.value = rs.text || '';
+					ele._picker.dispose(); 
+					ele._picker = null;
+				});
+			},
+			doSearch: function(ele){
+				var params = this.getQueryParams(ele);
+				if(!this.validateParams(params)){
+					return false;
+				}
+//				alert(JSON.stringify(params))
+				this.getStatisticsList(params);
+			},
+			getQueryParams: function(btn){
+				var p = btn.parentNode.parentNode,
+					form = p.querySelector('.mui-input-group'),
+					inps = form.querySelectorAll('input'),
+					spBtn = form.querySelector('button.dropdown-button'),
+					params = {'title': btn.getAttribute('title') || '',
+//						'_requestUrl': this.getRequestUrl(),
+//						'_fnType': this.getCurrentType(),
+						'warehouse': spBtn ? spBtn.getAttribute('storeHouse') || '' : '',
+						'warehouseText': spBtn ? spBtn.innerText || '' : ''}; 
+				mui.each(inps,function(){
+					if(this.name){ 
+						if(this.name=='userName'){this.name='username';}
+						params[this.name] = this.value ? this.value.trim() : '';
+					}
+				});
+				return params;
+			},
+			validateParams: function(params){
+				if(!params.username){
+					mui.toast('请输入上架人名称'); 
+					return false;
+				}
+				if(!params.from && !params.to){
+					mui.toast('请选择起始时间和截止时间'); 
+					return false;
+				}
+				if(!params.from){
+					mui.toast('请选择起始时间'); 
+					return false;
+				}
+				if(!params.to){
+					mui.toast('请选择截止时间');
+					return false;
+				}
+				return true;
+			},
+			getStatisticsList:function(params){
+				var me = this,url='/track/my_putaway_stat';
+				mui.doGet(App.createUrl(url),params,function(result){
+					result = result || {};
+//					alert(JSON.stringify(result));//上架数量统计[测试用户]<br/>2018-07-06至2018-08-06alert
+					var innerHd='上架数量统计<br/><span>'+params.username+'&nbsp;&nbsp;&nbsp;&nbsp;'+params.from+'至'+params.to+'</span>';
+					var innerBd='<table><tr>'+
+									'<td rowspan="2" style="width:33%">货架位数量</td>'+
+									'<td style="width:33%">4楼</td>'+
+									'<td>'+result['F4']+'</td>'+
+								'</tr>'+
+								'<tr>'+
+									'<td>5楼</td>'+
+									'<td>'+result['F5']+'</td>'+
+								'</tr>'+
+								'<tr>'+
+									'<td rowspan="4">sku数量</td>'+
+									'<td>1-10件</td>'+
+									'<td>'+result['1to10']+'</td>'+
+								'</tr>'+
+								'<tr>'+
+									'<td>11-20件</td>'+
+									'<td>'+result['11to20']+'</td>'+
+								'</tr>'+
+								'<tr>'+
+									'<td>21-100件</td>'+
+									'<td>'+result['21to100']+'</td>'+
+								'</tr>'+
+								'<tr>'+
+									'<td>101件-以上</td>'+
+									'<td>'+result['100m']+'</td>'+
+								'</tr></table>';
+					var resNum=0;
+					for(var k in result) {
+						resNum+=Math.abs(parseInt(result[k]));
+					};
+					if(resNum==0){
+						innerBd='<div class="default_msg">没有【'+params.username+'】上架数量信息</div>';
+					};						
+					document.getElementById('tb_head').innerHTML=innerHd;
+					document.getElementById('queryResult').innerHTML=innerBd;
+				},function(xhr,a,b,c){ 
+					var errMsg = me.getServerErrorMsg(xhr);
+					mui.alert('查询失败,' + errMsg);
+				},{'beforeSend': function(){ 
+					plus.nativeUI.showWaiting('查询中...');
+				},'complete': function(){
+					plus.nativeUI.closeWaiting();
+				}});				
+			},
+			formatDate: function(date){
+				date = date ? date : new Date();
+				return date.getFullYear() + '-' + format(date.getMonth() + 1) + '-' + format(date.getDate());
+				function format(num){
+					return num >= 10 ? num : '0' + num;
+				}
+			},			
+			getBeforeDate:function(n){
+				var date = new Date() ;
+				var year,month,day ;
+				date.setDate(date.getDate()-n);
+				year = date.getFullYear();
+				month = date.getMonth()+1;
+				day = date.getDate() ;
+				s = year + '-' + ( month < 10 ? ( '0' + month ) : month ) + '-' + ( day < 10 ? ( '0' + day ) : day) ;
+				return s ;
+			} 
+			
+		});
+		// h5+环境初始化完成
+		mui.plusReady(function(){
+			QueryMgr.ready();
+		});
+	</script>
+</html>

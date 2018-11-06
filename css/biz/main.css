@@ -1,0 +1,32 @@
+.mui-bar-nav .search-box{
+	margin-top: 2px;
+}
+.mui-bar-nav .search-box .mui-search{
+	/*width: -webkit-calc(100% - 42px);
+	width: calc(100% - 42px);*/
+	margin-right: 40px;
+}
+.mui-bar-nav .toolbox .mui-btn{
+	top: 9px;
+    margin: 0px;
+    position: absolute;
+    /*right: 0px;*/
+    padding: 4px 10px 2px;
+    border: 1px solid transparent;
+}
+.mui-btn-outlined:enabled:active{
+	background-color: transparent;
+}
+.app-icon.icon-shouhuo{
+	-webkit-transform: scale(.92);
+	-moz-transform: scale(.92);
+	transform: scale(.92);
+	
+}
+.mui-icon.mui-icon-compose{
+	-webkit-transform: scale(1.1);
+	-moz-transform: scale(1.1);
+    transform: scale(1.1);
+    top: 0px !important;
+}
+#OnshelfStatistics{color:#fff;font-size:14px;}

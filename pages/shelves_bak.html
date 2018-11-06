@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>上架</title> 
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/mui.picker.min.css">
+		<link rel="stylesheet" href="../css/mui.poppicker.css">
+		<link rel="stylesheet" href="../css/biz/app.css" />
+		<link rel="stylesheet" href="../css/app.icon.css">
+		<link rel="stylesheet" href="../css/biz/shelves.css"/>
+	</head>
+	<style>
+	</style>
+	<body>
+		<!-- 内容区域 -->
+		<div class="mui-content">
+			<div class="form-container">
+				<form class="mui-input-group">
+					<div class="mui-row">
+						<button id='storeHousePickerBtn' class="mui-btn mui-btn-block" type='button' storeHouse="SZ">深圳仓</button>
+				    	<span id="storeHouseIcon" class="mui-icon mui-icon-arrowdown dropselect"></span>
+					</div>
+				    <div class="mui-row mui-input-row input-area">
+				    	<div class="mui-col-sm-5 mui-col-xs-5 input-wrapper">
+				    		<div class="mui-input-row textarea-row-wrapper">
+						        <textarea id="message_input" class="mui-input-row textarea-row" rows="2" placeholder="请输上架信息" value=""></textarea>
+						    </div>
+				        </div>
+				        <div class="mui-col-sm-7 mui-col-xs-7 item-wrapper">
+				        	<div class="item">
+			        			<span class="title">货架:</span>
+			        			<span id="shelfNumber" class="text"></span>
+			        			<span id="btn_split" class="mui-icon mui-icon-plus btn"></span>
+				        	</div>
+				        	<div class="item">
+				        		<span class="title">SKU:</span>
+				        		<span id="sku" class="text"></span>
+				        	</div>
+				        	<!--<div class="item"><span class="title">数量:</span><span id="qty" class="text">9999</span></div>-->
+				        	<div class="item">
+				        		<span class="title">数量:</span>
+			        			<div id="qty" class="text qty-selector" stock-id=""></div>
+				        	</div>
+				        </div>
+				    </div>	
+				    <div id="originShelfNumberWrapper" class="mui-row content-wrapper row-wrapper">
+				    	<div class="content pd-content">
+				    		<span>货架号:</span>
+				    		<span id="originShelfNumber"></span>
+				    	</div>
+					</div>
+					<div id="addShelftNumWrapper" class="mui-row content-wrapper row-wrapper">
+				    	<div class="content">
+						</div>	
+					</div>
+				</form>
+				<div class="message">
+			    	<span id="message"></span>	
+		    	</div>
+			</div>
+		</div>
+		<div class="biz-btn-groups">
+			<button id="resetBtn" type="button" class="mui-btn mui-btn-primary">重置</button>
+			<button id="sendBtn" type="button" class="mui-btn mui-btn-primary">上架</button>
+		</div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/mui.picker.min.js"></script>
+	<script src="../js/mui.poppicker.js"></script> 
+	<script src="../js/biz/app.js"></script>
+	<script src="../js/biz/biz.js"></script>
+	<script>
+		mui.init({
+			gestureConfig:{
+				longtap:true
+			}
+		});
+		// 收货管理对象
+		var ShelvesMgr = mui.extend(true,window.Biz,{
+			options: {
+			},
+			init: function(){
+				ShelvesMgr.initEles();
+				ShelvesMgr.initElesData();
+				ShelvesMgr.bindEvent();
+			},
+			initEles: function(){
+				this.msgInputEle = document.querySelector('#message_input');
+				this.shelfNumEle = document.querySelector('#shelfNumber');
+				this.skuEle = document.querySelector('#sku');
+				this.qtyEle = document.querySelector("#qty");
+				this.originShelfNumEleWrapperEle = document.querySelector("#originShelfNumberWrapper");
+				this.originShelfNumberEle = document.querySelector("#originShelfNumber");
+				this.sendBtnEle = document.querySelector('#sendBtn');
+				this.resetBtnEle = document.querySelector('#resetBtn');
+				this.splitBtnEle = document.querySelector('#btn_split');
+				this.addShelftWrapperEle = document.querySelector('#addShelftNumWrapper');
+				this.addShelftContentEle = this.addShelftWrapperEle.querySelector('.content');
+				this.skuReg = new RegExp('^[0-9]{8}$');
+				this.shelfNumReg = new RegExp('^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z_-]{1,}$');
+				this.qtyReg = new RegExp('^\\d{1,7}$');
+				this.storeHousePickerBtn = document.querySelector("#storeHousePickerBtn");
+				this.storeHouseDropIcon = document.querySelector('#storeHouseIcon');
+				this.storeHousePicker = new mui.PopPicker();
+			},
+			initElesData: function(){ 
+				var storeHouseData = [
+					{'value': 'SZ','text': '深圳仓'},
+					{'value': 'UK','text': '英国仓'},
+					{'value': 'US','text': '美国仓'},
+					{'value': 'MD','text': '门店'}, 
+				];
+				this.storeHousePicker.setData(storeHouseData);
+				this.skuDataCache = {};
+			},
+			bindEvent: function(){
+				var me = this;
+				window.addEventListener('inputEleFocus',function(){
+					me.inputEleFocus();
+				});
+				document.addEventListener('keyup',function(evt){
+					if(me.isEnterKey(evt) && evt.srcElement.id != 'message_input'){
+						me.doInputBusiness(true,true);
+					}else{
+						evt.stopPropagation();
+						evt.preventDefault();
+					}
+				});
+				me.msgInputEle.addEventListener('keyup',function(evt){
+					if(me.isEnterKey(evt)){
+						me.doInputBusiness(true);
+					}else{
+						evt.stopPropagation();
+						evt.preventDefault();
+					}
+				});
+				me.sendBtnEle.addEventListener('tap',function(evt){
+					me.doSendBusiness();
+				});
+				me.resetBtnEle.addEventListener('tap',function(evt){
+					me.resetSendInfo(true);
+				});
+				me.storeHousePickerBtn.addEventListener('tap',function(evt){
+					me.storeHousePicker.show(function(items) {
+						me.storeHousePickerBtn.setAttribute('storeHouse',items[0].value);
+						me.storeHousePickerBtn.innerText = items[0].text;
+					});	
+				},false);
+				me.storeHouseDropIcon.addEventListener('tap',function(evt){
+					mui.trigger(me.storeHousePickerBtn,'tap');
+				},false);
+				me.qtyEle.addEventListener('tap',function(evt){
+					me.doGetNumberInfo(true);
+				},false); 
+				// 拆分货架
+				me.splitBtnEle.addEventListener('tap',function(evt){
+					me.addShelftNum();
+				});
+			},
+			// 输入处理
+			doInputBusiness: function(auoSubmit,isDocEvent){
+				var me = this,inputVal = me.msgInputEle.value ? me.msgInputEle.value.trim() : '',
+					inputVal = inputVal.replace(/(\\n+|\\r)+/,'');
+				me.msgInputEle.select();
+				me.showMessage('','clear');
+				if((inputVal == null || inputVal == '') && !isDocEvent){
+//					me.resetInputInfo();
+					me.selectInputInfo();
+					me.msgInputEle.value = '';
+					me.showMessage('请输入有效的信息','error');
+					return false;
+				}
+				if(me.skuReg.test(inputVal)){           // SKU
+					me.skuEle.innerText = inputVal;
+					me.skuDataCache[inputVal] = false;
+					if(auoSubmit){
+						me.doGetNumberInfo(true);           // 请求后台查询数量和货架位
+					}
+//				}else if(me.qtyReg.test(inputVal)){     // 数量
+//					me.qtyEle.innerText = inputVal;
+				}else if(me.shelfNumReg.test(inputVal)){// 货架号
+					me.shelfNumEle.innerText = inputVal;
+				}
+				if(isDocEvent){
+					me.commitShelvesData(auoSubmit); 
+				}
+			},
+			commitShelvesData: function(auoSubmit){
+				var me = this,params = me.getSendParams();
+				if(auoSubmit && me.skuReg.test(params.sku) && me.qtyReg.test(params.count) 
+					&& me.shelfNumReg.test(params.trackingNum) && me.skuDataCache[params.sku]){
+					me.doSendBusiness();
+				}
+			},
+			// 重置发送信息
+			resetSendInfo: function(forceFocus){
+				var me = this;
+				me.skuEle.innerText = '';
+				me.shelfNumEle.innerText = '';
+				me.qtyEle.innerText = '';
+				me.qtyEle.setAttribute('stock-id','');
+				me.skuDataCache = {};
+				me.resetInputInfo(forceFocus);
+				me.showMessage('','clear');
+				me.toggleOriginShelftNumInfo('','hide');
+				me.resetAddShelftNumRowEle();
+			},
+			// 重置输入信息
+			resetInputInfo: function(forceFocus){
+				this.selectInputInfo();
+				if(forceFocus){
+					this.msgInputEle.value = '';
+//					this.setShowSoftInput(this.msgInputEle);
+					this.msgInputEle.focus();
+				}
+			},
+			selectInputInfo: function(){
+				this.msgInputEle.select();
+			},
+			// 获取请求参数
+			getSendParams: function(){
+				var me = this,user = App.getUserInfo() || {},params = {};
+				params.userName = user.nickName || ''; // 用户名
+ 				params.trackingNum = me.shelfNumEle.innerText ? me.shelfNumEle.innerText.trim() : ''; // 货架号
+				params.sku = me.skuEle.innerText ? me.skuEle.innerText.trim() : '';         // SKU
+				params.count = me.qtyEle.innerText ? me.qtyEle.innerText.trim() : '';       // 数量
+				params.stockid = me.qtyEle.getAttribute('stock-id') || '';                  // 数量对应的ID
+				params.warehouse = me.storeHousePickerBtn.getAttribute('storeHouse') || ''; // 仓库
+				params.warehouseText = me.storeHousePickerBtn.innerText || '';
+				return params;
+			},
+			// 发送上架信息
+			doSendBusiness: function(type){
+				// 发送前先处理输入信息
+				this.doInputBusiness(false);
+				// 验证输入信息
+				if(!this.validateSendData(type)){
+					return false;
+				}
+				var me = this,
+					params = me.getSendParams(),
+					msg = '仓库:' + params.warehouseText + ',货架号:' + params.trackingNum 
+						+ ',SKU:' + params.sku + ',数量:' + params.count,
+					dialogMsg = '货架号:' + params.trackingNum + '\n' 
+						+ 'S  K  U:' + params.sku + '\n' + '数    量:' + params.count;
+				if(me.isSplitBusiness()){   // 如果是拆分货架业务
+					var rows = me.getAddShelftNumData() || [],nums = [],counts = [];
+					for(var i=0;i<rows.length;i++){
+						nums.push(rows[i].shelfNumber);
+						counts.push(rows[i].count);
+					}
+					params.trackingNum = nums.join(',');  // trackingNum参数覆盖
+					params.count = counts.join(',');      // count参数覆盖 
+				}		
+				// 提交数据		
+				mui.doGet(App.createUrl("/track/putaway"),params,function(result){
+					result = result || {};
+					if(result.errcode == '0'){
+						me.resetSendInfo(); // 重置信息
+						me.showMessage(msg + ' 上架成功','success');
+					}else{
+						me.showMessage(msg + ' 上架失败' + (result.errmsg ? (',' + result.errmsg) : ''),'error');
+					}
+				},function(xhr,a,b,c){
+					var errMsg = me.getServerErrorMsg(xhr);
+					me.showMessage(msg + ' 上架失败' + (errMsg ? (',' + errMsg) : ''),'error');
+				},{'beforeSend': function(){ 
+					me.showMessage('上架中...');  
+				},'complete': function(){
+					me.msgInputEle.select();  
+				}});
+			},
+			doGetNumberInfo: function(showLoading){
+				var me = this,params = me.getSendParams(),msg = '根据SKU:' + params.sku + ' 获取数量失败';
+				if(!params.sku){
+					me.showMessage('请先输入SKU','error');
+					me.selectInputInfo();
+					return false;
+				}
+				mui.doGet(App.createUrl("/track/scan_sku"),{'sku': params.sku},function(result){
+					result = result || {};
+					if(result && result.errcode == '0'){
+						me.alfterGetNumberInfo(result,params.sku);
+					}else{
+						me.showMessage(msg + (result.errmsg ? (',' + result.errmsg) : ''),'error');
+					}
+				},function(xhr){
+				 	var errMsg = me.getServerErrorMsg(xhr);
+					me.showMessage(msg + (errMsg ? (',' + errMsg) : ''),'error');
+				},{'beforeSend': function(){
+					me.toggleOriginShelftNumInfo('','hide');
+					if(showLoading){
+						me.showMessage('正在获取数量...');  
+					}
+				},'complete': function(){
+					me.msgInputEle.select(); 
+//					me.showMessage('','clear');
+				}});
+			},
+			alfterGetNumberInfo: function(result,sku){
+				var nums = result.data ? result.data.counts || [] : [],
+					warehouse = result.data ? result.data.warehouse || '' : '';
+				this.toggleOriginShelftNumInfo(warehouse,'show');	
+				if(nums){
+					this.openShelftNumModal(nums,sku);
+				}else{
+					this.showMessage('根据SKU获取数量信息失败','error');
+				}
+			},
+			toggleOriginShelftNumInfo: function(msg,type){
+				this.originShelfNumEleWrapperEle.style.display = type == 'show' ? 'block' : 'none';
+				this.originShelfNumberEle.innerText = msg; 
+			},
+			openShelftNumModal: function(nums,sku){
+				var me = this,bts = [],bt;
+				for(var field in nums){ 
+					bts.push({'title':nums[field],'value':field,'color':'#19bcff'});
+				}
+				if(bts && bts.length == 1){ // 如果只有一个，则直接显示出来，不用选择
+					me.setQtyInfo(bts[0],sku);
+					return ;
+				}
+				plus.nativeUI.actionSheet({title:"请选择数量",cancel:"取消",buttons:bts},
+					function(e){ 
+						if(e.index > 0){
+							bt = bts[e.index-1];
+							me.setQtyInfo(bt,sku);
+						}
+					}
+				);
+			}, 
+			setQtyInfo: function(row,sku){
+				row = row || {};
+				this.qtyEle.setAttribute('stock-id',row.value || '');
+				this.qtyEle.innerText = row.title || '';
+				this.skuDataCache[sku] = true; // 记录此SKU已经加载成功
+//				this.commitShelvesData(true);  // 提交数据
+			},
+			// 验证上架信息
+			validateSendData: function(type){
+				var me = this,params = me.getSendParams(),msg = '',result = true;
+				if(!me.shelfNumReg.test(params.trackingNum)){
+					msg = '无效的货架号';
+					result = false;
+				}
+				if(result && !me.skuReg.test(params.sku)){
+					msg = '无效的SKU';
+					result = false;
+				}
+				if(result && !me.qtyReg.test(params.count)){
+					msg = '无效的数量';
+					result = false;
+				}
+				if(!result){
+					me.showMessage(msg,'error');
+					me.resetInputInfo();
+//					me.setShowSoftInput(me.msgInputEle);
+					return false;
+				}
+				if(!me.validateAddShelftNumData()){
+					me.resetInputInfo();
+					return false;
+				}
+				this.showMessage('','clear');
+				return true;
+			},
+			inputEleFocus: function(eName){
+				var me = this;
+				if(eName == 'sku'){
+//					me.setShowSoftInput(this.skuEle); 
+					me.skuEle ? me.skuEle.select() : '';
+				}else{
+//					me.setShowSoftInput(this.msgInputEle);
+					me.msgInputEle ? me.msgInputEle.select() : '';
+				}
+			},
+			addShelftNum: function(){
+				var me = this,rowEle,params = me.getSendParams();
+				if(!params || !params.count){
+					me.showMessage('请先选择有效的数量','error');
+					return false;
+				}
+				rowEle = me.createAddShelftNumRowEle();
+				this.addShelftContentEle.appendChild(rowEle);
+				// 删除行事件
+				rowEle.querySelector('.mui-icon.btn').addEventListener('tap',function(evt){
+					me.addShelftContentEle.removeChild(this.parentNode);
+					me.toggleShleftWrapperStyle();
+				});
+				me.toggleShleftWrapperStyle();
+			},
+			toggleShleftWrapperStyle: function(){
+				var nodes = this.addShelftContentEle.querySelectorAll('div.mui-row');
+				if(!nodes || !nodes.length){
+					this.addShelftWrapperEle.style.display = 'none';
+				}else{
+					this.addShelftWrapperEle.style.display = 'block';
+				}
+			},
+			validateAddShelftNumData: function(){
+				var data = this.getAddShelftNumData(),
+					params = this.getSendParams(),
+					total = params && params.count ? Number(params.count) : 0;
+				if(!data || !data.length){
+					return true;
+				}
+				var row,sum = 0,flag = true;
+				for(var i=0;i<data.length;i++){
+					row = data[i];
+					if(!row.shelfNumber){
+						this.showMessage('货架号不能为空','error');
+						flag = false;
+						break;
+					}
+					if(!row.count){
+						this.showMessage('数量不能为空','error');
+						flag = false;
+						break;
+					}
+					if(isNaN(row.count)){
+						this.showMessage('输入的数量不是有效的数字','error');
+						flag = false;
+						break;
+					}
+					sum += Number(row.count);
+				}
+				if(sum > total){
+					this.showMessage('拆分后的数量总数不能大于' + total,'error');
+					flag = false;
+				}
+				return flag;
+			},
+			getAddShelftNumData: function(){
+				var eles = this.addShelftContentEle.querySelectorAll('div.mui-row');
+				if(!eles || !eles.length){
+					return [];
+				} 
+				var rows = [],cols,row,inp;
+				mui.each(eles,function(i,o){
+					row = {};
+					cols = this.querySelectorAll('div.mui-col');
+					mui.each(cols,function(j,oo){
+						inp = this.querySelector('input');
+						row[inp.getAttribute('name')] = inp.value ? inp.value.trim() : '';
+					});
+					rows.push(row);
+				}); 
+				return rows;
+			},
+			isSplitBusiness: function(){
+				var eles = this.addShelftContentEle.querySelectorAll('div.mui-row');
+				return eles && eles.length;
+			},
+			resetAddShelftNumRowEle: function(){
+				this.addShelftContentEle.innerHTML = '';
+			},
+			createAddShelftNumRowEle: function(){
+				var row = document.createElement('div'),
+					col1 = document.createElement('div'),
+					col2 = document.createElement('div'),
+					btn = document.createElement('span');
+				row.classList.add('mui-row');
+				col1.classList.add('mui-col','mui-col-sm-5','mui-col-xs-5');
+				col2.classList.add('mui-col','mui-col-sm-5','mui-col-xs-5');
+				btn.classList.add('mui-icon','mui-icon-minus','btn');
+				col1.innerHTML = '<input name="shelfNumber" type="text" class="mui-input-clear" placeholder="输入货架号">';
+				col2.innerHTML = '<input name="count" type="text" class="mui-input-clear" placeholder="输入数量">';
+				row.appendChild(col1);
+				row.appendChild(col2);
+				row.appendChild(btn);
+				return row;
+			},
+		});
+		// h5+环境初始化完成
+		mui.plusReady(function(){
+			ShelvesMgr.ready();
+		});
+	</script>
+</html>

@@ -1,0 +1,92 @@
+.mui-control-content {
+	background-color: white;
+	min-height: 215px;
+}
+.mui-control-content .mui-loading {
+	margin-top: 50px;
+}
+.mui-slider-group .mui-slider-item .mui-scroll-wrapper{
+	padding-top: 20px;
+}
+.mui-slider-group .mui-slider-item .mui-scroll-wrapper .mui-input-row input{
+	text-align: center;
+}
+.mui-input-group > .mui-input-row:first-child::before{
+	position: absolute;
+	content: " ";
+    right: 0;
+    top: 0;
+    left: 15px; 
+    right: 15px;
+    height: 1px;
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+    background-color: #c8c7cc;
+}
+.mui-input-group .mui-input-row::after{
+	right: 15px;
+}
+.mui-input-row > .input-wrapper:first-child > .mui-input-row::after{
+    position: absolute;
+    top: 12px !important;
+    right: 0 !important;
+    left: auto !important;
+    background-color: #c8c7cc;
+    height: 35px !important;
+    width: 1px;
+}
+.mui-input-row > .input-wrapper:last-child > .mui-input-row::after{
+	display: none !important;
+}
+.mui-input-group:before,.mui-input-group::after{
+	height: 0px !important;	
+}
+.mui-row:after, .mui-row::before{
+	display: block;
+}
+.mui-input-group .mui-input-row{
+	height: auto !important;
+	padding: 10px;
+}
+.mui-scroll .block-btn-wrapper{
+	padding: 15px;
+}
+.mui-scroll .block-btn-wrapper .mui-btn{
+	background-color: #19bcff;
+	border: solid 1px #19bcff;
+}
+.mui-scroll .block-btn-wrapper .mui-btn:active{
+    border: 1px solid #007aff;
+    background-color: #007aff;
+}
+.mui-input-group input, .mui-input-group textarea{
+	font-size: 15px;
+}
+.mui-input-group .dropdown-button{
+	border: none;
+    display: block;
+    width: 100%;
+    margin-bottom: 0px;
+    padding: 10.5px 15px;
+}
+.mui-input-group .mui-icon.dropselect {
+    position: absolute;
+    top: 16px;
+    right: 32%;
+}    
+.mui-input-group .message{
+	width: auto;
+    text-align: left;
+    word-break: break-all;
+    padding: 5px 15px;
+    font-size: 17px;
+}    
+.mui-input-row.table-wrapper{
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.mui-input-row.table-wrapper::after{
+	height: 0px !important;
+	display: none;
+}
+.mui-btn-block{padding: 6px 12px;}

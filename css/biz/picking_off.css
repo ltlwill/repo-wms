@@ -1,0 +1,8 @@
+.form-container .mui-input-group .mui-input-row input[readonly]{
+	background-color: #CCCCCC;
+	cursor: pointer;
+}
+.form-container .mui-input-group .mui-input-row input{
+	margin-right: 15px;
+    width: calc(65% - 15px);
+}

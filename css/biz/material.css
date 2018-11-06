@@ -1,0 +1,52 @@
+.app-bar{
+	background-color: #19bcff;
+	color: #FFFFFF;
+	height: 45px;
+}
+.mui-bar-tab .mui-tab-item{
+	color: #FFFFFF;
+}
+.app-bar .mui-icon{
+	color: #FFFFFF;
+}
+.toolbar .mui-bar-tab .mui-tab-item.mui-active{
+	color: #FFFFFF;
+}
+.mui-bar{
+	bottom: 0px;
+}
+.toolbar1 .mui-bar-tab{
+	width: 100%;
+}
+.toolbar1 .mui-bar-tab .mui-tab-item{
+    display: block;
+    width: auto;
+}
+.toolbar1 .mui-bar-tab .mui-tab-item .mui-icon{
+	top: 10px;
+}
+.mui-popover {
+	height: 143px;
+}
+span.percentage{
+	color: #19BCFF !important;
+    width: 55px;
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding: 5px;
+}
+.mui-icon.app-icon.icon-delete1{
+	-webkit-transform: scale(.8);
+    transform: scale(.8);
+}
+.ui-img-table .ui-img-row .ui-img-cell .ui-img-progressbar::before{
+	background: #dd524d;
+}
+.input-row-wrapper input{
+	height: 40px !important;
+	padding: 0px 15px;
+}
+.img-grid-wrapper{
+	padding: 0px 15px;
+}

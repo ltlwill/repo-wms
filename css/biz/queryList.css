@@ -1,0 +1,50 @@
+.app-header .detail{
+    position: absolute;
+    bottom: 2px;
+    font-size: 12px !important;
+    width: 100%;
+    padding: 0px;
+    height: 15px;
+    text-align: center;
+}
+.mui-table-view-cell:after{
+	left: 0px;
+}
+.mui-table-view .mui-table-view-cell{
+	padding: 11px 0px;
+	font-size: 15px;
+}
+.mui-table-view .mui-table-view-cell.title{
+	background-color: #efeff4;
+	font-weight: bold;
+}
+.mui-table-view .mui-table-view-cell .mui-row [class*='mui-col-']{
+	padding: 0px 5px;
+    word-break: break-all;
+    white-space: normal;
+}
+.mui-scroll .mui-table-view{
+	margin-bottom: 47px;
+}
+.app-bar{
+	height: auto;
+    padding-top: 5px;
+    bottom: -1px;
+}
+.grid-pager .mui-pagination{
+    /*margin: 10px 0px 5px;*/
+   margin: 0px;
+}
+.grid-pager .mui-pagination .pagination-info > a{
+	padding: 0px;
+}
+.grid-pager .mui-pagination .pagination-info > a > div{
+	width: 100%;
+    padding: 0px 2px;
+}
+.grid-pager .mui-pagination .pagination-info > a > div:first-child{
+	border-bottom: solid 1px #ddd;
+}
+.grid-pager .mui-pagination > li > a,.grid-pager .mui-pagination > li > span{
+	padding: 9px 10px;
+}

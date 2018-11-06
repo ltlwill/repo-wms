@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>取件</title> 
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/biz/app.css" />
+		<link rel="stylesheet" href="../css/app.icon.css">
+		<link rel="stylesheet" href="../css/biz/pickup.css"/>
+	</head>
+	<style>
+	</style>
+	<body>
+		<!-- 内容区域 -->
+		<div class="mui-content">
+			<div class="form-container">
+				<form class="mui-input-group">
+				    <div class="mui-input-row">
+				        <label class="text-title">跟踪号</label>
+				    </div>
+				    <div class="mui-input-row textarea-row-wrapper">
+				        <textarea id="trackinNum" class="mui-input-row textarea-row mui-input-clear" rows="4" placeholder="请输入跟踪号" value=""></textarea>
+				    	<!--<div id="test" style="width: 100px;height: 100px;border: solid 1px darkgoldenrod;margin: auto;" contenteditable="false"></div>-->	
+				    	<!--<input id="test" type="hidden" autofocus="autofocus">-->
+				    </div>
+				</form>
+				<div class="message">
+			    	<span id="message"></span>	
+		    	</div>
+			</div>
+		</div>
+		<div class="biz-btn-groups">
+			<button id="resetBtn" type="button" class="mui-btn mui-btn-primary">重置</button>
+			<button id="sendBtn" type="button" class="mui-btn mui-btn-primary">取件</button>
+		</div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/biz/app.js"></script>
+	<script src="../js/biz/biz.js"></script>
+	<script>
+		mui.init({
+			gestureConfig:{
+				longtap:true
+			}
+		});
+		// 取件管理对象
+		var PickUpMgr = mui.extend(true,window.Biz,{
+			options: {
+			},
+			init: function(){
+				PickUpMgr.initEles();
+				PickUpMgr.bindEvent();
+			},
+			initEles: function(){
+				this.trackinNumEle = document.getElementById('trackinNum');
+				this.sendBtnEle = document.getElementById('sendBtn');
+				this.resetBtnEle = document.getElementById('resetBtn');
+				this.inputEleFocus();
+			},
+			bindEvent: function(){
+				var me = this;
+				plus.webview.currentWebview().addEventListener('show',function(){
+					me.inputEleFocus();
+				});
+				me.trackinNumEle.addEventListener('input',function(evt){
+//					me.doSendBusiness(); // 无法区分是扫描输入还是手动输入
+				});
+				me.trackinNumEle.addEventListener('keyup',function(evt,a,b,c){
+					if(me.isEnterKey(evt)){
+						me.doSendBusiness();
+					} 
+				});
+				me.sendBtnEle.addEventListener('tap',function(evt){
+					me.doSendBusiness();
+				});
+				me.resetBtnEle.addEventListener('tap',function(evt){
+					me.resetBusinessData(true);
+				});
+				window.addEventListener('inputEleFocus',function(){
+					me.inputEleFocus();
+				});
+			},
+			resetBusinessData: function(forceFocus){
+				this.trackinNumEle.value = '';
+				this.showMessage('','clear');
+				if(forceFocus){
+//					this.setShowSoftInput(this.trackinNumEle);
+					this.trackinNumEle.focus();
+				}
+			},
+			doSendBusiness: function(){
+				this.doSendTrackingNum();
+			},
+			// 发送跟踪号
+			doSendTrackingNum: function(type){
+				if(!this.validateTrackingNum(type)){ 
+					return false;
+				}
+				var me = this,
+					user = App.getUserInfo() || {},
+					params = {'trackingNum': me.trackinNumEle.value.trim(),'userName': user.nickName || ''},
+					msg = '跟踪号:' + params.trackingNum;
+				// 请求后台
+				mui.doGet(App.createUrl("/track/pickup"),params,function(result){
+					result = result || {};
+					if(result.errcode == '0'){
+						me.showMessage(msg + ' 取件成功','success');
+					}else{
+						me.showMessage(msg + ' 取件失败' + (result.errmsg ? (',' + result.errmsg) : ''),'error');
+					}
+				},function(xhr){
+					var errMsg = me.getServerErrorMsg(xhr);
+					me.showMessage(msg + ' 取件失败' + (errMsg ? (',' + errMsg) : ''),'error');
+				},{'beforeSend': function(){ 
+					me.showMessage('取件中...');
+				},'complete': function(){
+					me.trackinNumEle.select();
+				}});
+			},
+			// 验证跟踪号
+			validateTrackingNum: function(type){
+				var num = this.trackinNumEle.value ? this.trackinNumEle.value.trim() : '';
+				this.trackinNumEle.value = num; 
+				this.trackinNumEle.select();
+				if(num == '' || num == null){
+//					this.setShowSoftInput(this.trackinNumEle);
+					this.showMessage('无效的跟踪号','error');
+					return false;
+				} 
+				this.showMessage('','clear');
+				return true;
+			},
+			// 获取焦点
+			inputEleFocus: function(){
+//				this.setShowSoftInput(this.trackinNumEle);
+				this.trackinNumEle.select();
+			},
+		});
+		// h5+环境初始化完成
+		mui.plusReady(function(){
+			PickUpMgr.ready();
+		});
+	</script>
+</html>

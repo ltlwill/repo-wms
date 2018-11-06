@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>more</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/biz/app.css">
+		<link rel="stylesheet" href="../css/app.icon.css"/>
+		<link rel="stylesheet" href="../css/biz/more.css">
+	</head>
+	<body>
+		<!--页面主内容区开始-->
+		<div class="mui-content">
+			<ul class="mui-table-view mui-grid-view mui-grid-9">
+	            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+	            	<!--<a href="factory_receiving.html">-->
+            		<a href="">
+	                    <span class="mui-icon logo-icon icon-shouhuo"></span> 
+	                    <div class="mui-media-body">工厂收货</div>
+	            	</a>
+	            </li>
+	            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+	            	<a href="picking_off.html"> 
+	                    <span class="mui-icon logo-icon icon-qujian"></span>
+	                    <div class="mui-media-body">拣货下架</div> 
+	            	</a>
+	            </li>
+	            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+	            	<a href="setting.html">
+	                    <span class="mui-icon mui-icon-gear"></span>
+	                    <div class="mui-media-body">设置</div>
+	            	</a>
+	            </li>
+	        </ul>
+		</div>
+		<!--页面主内容区结束-->
+	</body>
+	<script type="text/javascript" src="../js/mui.min.js"></script>
+	<script type="text/javascript" src="../js/biz/biz.js"></script>
+	<script type="text/javascript" src="../js/biz/app.js" ></script>
+	<script>
+		// MUI初始化 
+		mui.init({
+			swipeBack:true //启用右滑关闭功能
+		});
+		// 设置管理对象
+		var MoreMgr = mui.extend(true,window.Biz,{
+			init: function(){
+				MoreMgr.initEles();
+				MoreMgr.initElesData();
+				MoreMgr.bindEvent(); 
+			},
+			initEles: function(){
+			},
+			initElesData: function(){
+			},
+			bindEvent: function(){
+				var me = this;
+				mui('.mui-content .mui-grid-view').on('tap','li.mui-table-view-cell a',function(evt){
+					var href = this.getAttribute('href') || '';
+					if(!href){
+						mui.toast('暂未开放此功能')
+						return false;
+					}
+					me.openBusinessWebWiew({'id':href,'url':href});
+				});
+			},
+			openBusinessWebWiew: function(params){
+				params = params || {};
+				mui.openWindow({
+					id: params.id,
+					url: params.url,
+					style: {
+						scrollIndicator: 'none'  // 不显示滚动条
+					},
+					show:{ 
+						aniShow:'slide-in-right' // 从右侧横向滑动效果
+					},
+					waiting:{
+						autoShow:false 
+					} 
+				});
+			},
+		});
+		// 初始化完成
+		mui.plusReady(function(){
+			MoreMgr.ready();
+		});
+	</script>
+</html>

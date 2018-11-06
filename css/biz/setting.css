@@ -1,0 +1,66 @@
+.user-img{
+    font-size: 38px;
+}
+.user-wrapper{
+	display: table;
+}
+.user-wrapper .user-head{
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+.user-wrapper .user-body{
+	/*width: calc(100% - 50px);
+	float: right;*/
+	display: table-cell;
+	padding-left: 5px;
+}
+.mui-table-view,.mui-input-group{
+	margin-top: 15px;
+}
+.mui-table-view:last-child{
+	margin-bottom: 15px;
+}
+.mui-content-padded{
+	margin: 10px 15px;
+}
+.mui-table-view-cell .mui-numbox{
+	position: absolute;
+    top: 3px;
+    right: 15px;
+}
+.mui-table-view-cell .app-version{
+	float: right;
+    padding-right: 20px;
+    color: #aaa;
+}
+.sub-table-view-wrapper{
+    padding-bottom: 0px !important;
+    padding-right: 0px !important;
+}
+.sub-table-view-wrapper > .title{
+	padding-bottom: 11px !important;
+}
+.sub-table-view-wrapper > .sub-table-view{
+    margin: 12px 0px 0px 0px;
+}
+.sub-table-view-wrapper > .sub-table-view > .sub-table-cell{
+    padding-left: 45px !important;
+    padding-right: 0px !important;
+}
+.sub-table-view-wrapper > .sub-table-view >.sub-table-cell input[type=radio]{
+	left: 15px;
+}
+.sub-table-view-wrapper > .sub-table-view >.sub-table-cell > .text-wrapper{
+    word-break: keep-all;
+}
+.sub-table-view-wrapper > .sub-table-view >.sub-table-cell > .text-wrapper > .primary{
+	font-size: 15px;
+}
+.sub-table-view-wrapper > .sub-table-view >.sub-table-cell > .text-wrapper > .secondary{
+	font-size: 12px;
+    color: #ccc;
+}
+.sub-table-view-wrapper > .sub-table-view > .sub-table-cell::after{
+    right: 30px;
+}

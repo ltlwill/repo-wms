@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>建料</title> 
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/mui.zoom.css" />
+		<link rel="stylesheet" href="../css/mui.imageviewer.custom.css">
+		<link rel="stylesheet" href="../css/biz/app.css" />
+		<link rel="stylesheet" href="../css/app.icon.css">
+		<link rel="stylesheet" href="../css/biz/img.grid.css" />
+		<link rel="stylesheet" href="../css/biz/material.css"/>
+	</head>
+	<body>
+		<div class="mui-content">
+			<div class="form-container">
+			<form class="mui-input-group">
+			    <div class="mui-input-row">
+			        <label class="text-title">货架</label>
+			    </div>
+			    <!--<div class="mui-input-row input-row-wrapper">
+			        <input id="shelfNumber" class="mui-input-row mui-input-clear" placeholder="请输入货架号" value="">
+			    </div>-->
+			    <div class="mui-input-row mui-select">
+			        <select id="shelfNumber" class="mui-input-clear" placeholder="请输入货架号" style="padding-left:20px;">
+			        	<option value="BF">板房</option>
+			        	<option value="EFE">广州</option>
+			        	<option value="SZ">松滋</option>
+			        </select>
+                </div>
+			</form>
+		    <!--图片列表-->
+		    <div class="img-grid-wrapper">
+		    	<ul id="my_img_table" class="ui-img-table"></ul>
+		    </div>
+		</div>
+		<!--<nav class="mui-bar app-bar grid-pager">
+			<ul class="mui-pagination mui-pagination-sm">
+				<li class="mui-previous">
+					<a id="btn_sel_images" href="#">
+						添加
+					</a>
+				</li>
+				<li class="mui-previous">
+					<span id="percentage_msg" class="percentage none">100%</span>
+				</li>
+				<li class="mui-previous"> 
+					<a id="btn_upload_images" href="#">
+						上传
+					</a>
+				</li>
+			</ul>	
+		</nav>-->
+		<!-- 工具栏 -->
+		<nav id="grid_toolbar" class="mui-bar app-bar toolbar none" style="z-index:9999">
+			<div class="mui-bar-tab">
+			    <a id="btn_del_selected" class="mui-tab-item" href="#">
+			    	<div class="content">
+			    		<span class="mui-icon app-icon icon-delete1"></span>
+			        	<span class="mui-tab-label">删除</span>
+			    	</div>	
+			    </a>
+			    <a id="btn_select_all" class="mui-tab-item" href="#">
+			    	<div class="content">
+			    		<span class="mui-icon app-icon icon-check5 scale-9"></span>
+			        	<span class="mui-tab-label">全选</span>
+			    	</div>
+			    </a>
+			</div>
+			<div class="back-toolbar">
+				<span class="mui-icon mui-icon-undo"></span>
+			</div>
+		</nav>
+		<div class="biz-btn-groups">
+			<button id="btn_sel_images" type="button" class="mui-btn mui-btn-primary">添加图片</button>
+			<button id="btn_upload_images" type="button" class="mui-btn mui-btn-primary">上传图片</button>
+		</div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/mui.zoom.js"></script>
+	<script src="../js/mui.previewimage.custom.js"></script>
+	<script src="../js/biz/app.js"></script>
+	<script src="../js/biz/biz.js"></script>
+	<script src="../js/biz/list.biz.js"></script>
+	<script src="../js/biz/img.grid.js"></script>
+	<script type="text/javascript">
+		mui.init({
+			gestureConfig:{
+				longtap:true
+			}
+		});
+		// 上传管理对象
+		var MaterialMgr = mui.extend(true,window.ListBiz,{
+			options: { 
+				maxSelImageNum: 20, // 最多可选图片数量
+//				uploadUrl: App.createOAuthUrl('/upload/uploadImages'),      // 上传图片地址(图片库地址)
+				uploadUrl: App.createUrl('/track/add_material'),                  // 上传图片地址(产品系统地址)
+			},
+			init: function(){
+				MaterialMgr.initEles();
+				MaterialMgr.bindEvent();
+			},
+			initEles: function(){
+				this.shelfNumberEle = document.getElementById('shelfNumber');         // 货架号输入框
+				this.selImagesBtn = document.getElementById('btn_sel_images');        // 图片选择按钮
+				this.uploadImagesBtn = document.getElementById('btn_upload_images');  // 图片上传按钮 
+				this.percentageMsgEle = document.getElementById('percentage_msg');    // 上传百分比显示区域
+				this.uploadQueue = [];                             // 上传队列 ,数据格式[{path:''（图片路径）,name:''（图片名称）,key:''（唯一标识）,mime:''},...] 
+				this.uploadTask = this.createUploadTask();         // 创建上传任务
+				this.imageKey = 0;                                 // 图片的唯一标识key
+				this.nameKeyMapping = {};                          // name与key的映射
+				this.initGridTable();
+			},
+			bindEvent: function(){
+				var me = this;
+				// 图片选择按钮事件
+				this.selImagesBtn.addEventListener('tap',function(){
+					if(me.uploadQueue && me.uploadQueue.length > me.options.maxSelImageNum){
+						mui.toast('每次最多可上传' + me.options.maxSelImageNum + '张图片');
+						return false;
+					}
+					var btnArray = [{title:"拍照",color:'#19bcff'},{title:"相册选择",color:'#19bcff'}];
+					plus.nativeUI.actionSheet( {
+						title:"选择照片",
+						cancel:"取消",
+						buttons:btnArray
+					}, function(e){
+						switch (e.index){
+							case 0:  // 取消
+								break;
+							case 1:  // 拍照
+								me.addImagesFromCamera();
+								break;
+							case 2:  // 相册选择
+								me.addImagesFromPhotos();
+								break;
+						}
+					} );
+				});
+				// 图片上传按钮事件
+				this.uploadImagesBtn.addEventListener('tap',function(){
+					if(!me.uploadQueue || !me.uploadQueue.length){
+						mui.toast('没有可上传的图片');
+						return false;
+					}
+					var shelfNumber = me.shelfNumberEle.value ? me.shelfNumberEle.value.trim() : '';
+					if(!shelfNumber){
+						mui.toast('请先填写货架号');
+						return false;
+					}
+					me.updateElementsStatus(true); // 修改按钮状态为不可用
+					me.startUpload({'ws_code': shelfNumber});
+				});
+				// 更新上传进度事件
+				window.addEventListener('updateUploadPercentageMessage',function(evt){
+					me.updateUploadPercentageMessage(evt.detail.message,evt.detail.type);
+				});
+			},
+			initGridTable: function(){
+				var me = this,
+				options = {
+					urlField: 'path',
+					idField: 'key',
+					imgProps: {'data-preview-src':'path','id':'key','name':'name'},
+					showEmptyMsg: false,
+					onLoaded: function(rows){
+						// 暂时废掉上传时的预览功能，上传列表的预览有问题，下个版本再实现
+//						mui.previewImage({'onOpen': me.onPreviewOpen,'onClose': me.onPreviewClose});
+					},
+					onOpenSelectMode:function(){
+						me.onOpenSelectMode();
+					},
+					onDataChange: function(type,rows){
+						var allRows = me.table.imgGrid('getRows') || [];
+						me.updateNavbarStatus((!allRows || !allRows.length) ? 'hide' : 'show',allRows.length );
+					},
+				};
+				this.table.imgGrid(options);
+			},
+			addImagesToGrid: function(images){
+				this.table.imgGrid('addItems',images || []);
+			},
+			delSelected: function(){
+				var selRows = this.table.imgGrid('getSelectedRows');
+				if(!selRows || !selRows.length){
+					mui.toast('请选择要删除的图片');
+					return false;
+				}
+				// 从表格里移除元素
+				this.table.imgGrid('removeSelected');
+				// 从上传队列里面移除
+				this.removeImagesFromQueue(selRows);
+				// 如果全部移除了，则修改上传进度信息
+				var rows = this.table.imgGrid('getRows') || [];
+				if(!rows || !rows.length){
+					this.setBackToolbarStatus('close'); 
+					// 更新上传百分比信息
+//					mui.fire(this.getPWebview(),'updateUploadPercentageMessage',{'type':'hide','message':''});
+					this.updateUploadPercentageMessage('','hide');
+				}
+			},
+			// 拍照添加图片
+			addImagesFromCamera: function(){
+				var me = this,cmr = plus.camera.getCamera(); 
+				cmr.captureImage( function ( p ) {
+					plus.io.resolveLocalFileSystemURL( p, function ( entry ) {
+						me.addAndConvertImages(entry.fullPath);
+					}, function ( e ) {
+//						console.log( "读取拍照文件失败：" + e.message );
+					} );
+				}, function ( e ) {
+//					console.log( "拍照失败，错误编码：" + e.code + '，错误信息：' + e.message );
+				}, {filename:"_doc/camera/",index:1} );
+			},
+			// 从相册选择图片
+			addImagesFromPhotos: function(){
+				var options = {
+					multiple: true,  // 开启多选模式
+					filter: 'none', // 仅选择图片
+					maximum: this.options.maxSelImageNum,   // 最多选择的图片数量
+					system: false,
+					onmaxed: function(evt){                 // 超过最多选择图片数量事件
+						mui.toast('最多可选' + this.options.maxSelImageNum + '张图片');
+					},
+				};
+				// 开始选择图片
+				plus.gallery.pick(this.onSelectImagesFromPhotosSuccess,this.onSelectImagesFromPhotosError,options);
+			},
+			// 从相册选择图片成功
+			onSelectImagesFromPhotosSuccess: function(evt){
+				MaterialMgr.addAndConvertImages(evt.files);
+			},
+			addAndConvertImages: function(paths){
+				var images = this.ceateImagesObject(paths || []);
+				if(!images || !images.length){
+					return false;
+				}
+				// 添加到图片表格
+//				mui.fire(this.getSubWebview(),'addImages',{'images': JSON.stringify(images)});
+				this.addImagesToGrid(images);
+				// 添加到上传队列
+				this.addImagesToQueue(images);
+			},
+			// 从相册选择图片失败
+			onSelectImagesFromPhotosError: function(evt){
+//				mui.toast('从相册选取图片失败');
+			},
+			// 创建上传任务
+			createUploadTask: function(){
+				var task = plus.uploader.createUpload(this.options.uploadUrl,{'method':'POST'},this.onUploadCompleted);
+				// 设置公共参数
+				this.setCommonUploadParams(task);
+				// 添加文件上传完成事件
+				task.addEventListener('statechanged',this.onImageFileUploadStateChanged,false);
+				return task;
+			}, 
+			// 当上传完成时
+			onUploadCompleted: function(upload,status){
+				var me = MaterialMgr,msg = '上传失败';
+				if(status != '200'){
+					switch(status){
+						case 413:
+							msg += ',图片过大'
+							break;
+						default:
+						    msg = '上传失败';	
+						    break;
+					}
+//					plus.nativeUI.alert(msg);
+					mui.alert(msg);
+				}
+				me.updateElementsStatus(false); // 修改按钮状态
+				// 移除所有的进度条
+//				mui.fire(me.getSubWebview(),'removeAllProgressbar',{});
+				me.removeAllProgressbar();
+				var resText = upload.responseText || '',
+					resJson = JSON.parse(resText || '{}');
+				if(resJson.errcode != '0'){ // 上传失败
+//					plus.nativeUI.alert(msg + ',' + (resJson.errmsg || ''),function(){},'建料失败'); 
+					mui.alert(msg + ',' + (resJson.errmsg || ''),'建料失败');
+					me.updateImageStatus(me.getKeysFromUploadQueue(),'addFailFlag');
+				}else{
+					mui.alert('货架号:' + (resJson.data.ws_code) + '\nSKU:' + (resJson.data.sku),'建料成功');
+//					plus.nativeUI.alert('货架号:' + (resJson.data.ws_code) + '\nSKU:' + (resJson.data.sku),function(){},'建料成功'); 
+				}
+				// 设置上传成功的标识
+				if(resJson.data.success && resJson.data.success.length){
+//					mui.fire(me.getSubWebview(),'updateImageStatus',
+//						{'keys':JSON.stringify(me.getKeysFromNameKeyMapping(resJson.success)),'method':'addCompleteFlag'});
+					me.updateImageStatus(me.getKeysFromNameKeyMapping(resJson.data.success),'addCompleteFlag');
+				}
+				// 设置上传失败的标识 
+				if(resJson.data.fail && resJson.data.fail.length){
+//					mui.fire(me.getSubWebview(),'updateImageStatus',
+//						{'keys':JSON.stringify(me.getKeysFromNameKeyMapping(resJson.fail)),'method':'addFailFlag'});
+					me.updateImageStatus(me.getKeysFromNameKeyMapping(resJson.data.fail),'addFailFlag');
+				}
+				// 重置任务
+				me.resetUploadTask(resJson);
+			},
+			updateElementsStatus: function(disable){
+				if(disable){
+					this.shelfNumberEle.setAttribute('disabled','disabled');
+					this.selImagesBtn.setAttribute('disabled','disabled');
+					this.uploadImagesBtn.setAttribute('disabled','disabled');
+				}else{
+					this.shelfNumberEle.removeAttribute('disabled');
+					this.selImagesBtn.removeAttribute('disabled');
+					this.uploadImagesBtn.removeAttribute('disabled');
+				}
+			},
+			// 跟新图片的状态（上传中、成功、失败）
+			updateImageStatus: function(keys,methodName){
+				if(!keys || !keys.length){
+					return false;
+				}
+				for(var i=0;i<keys.length;i++){
+					this.table.imgGrid(methodName,keys[i]);
+				}
+			},
+			getKeysFromNameKeyMapping: function(names){
+				names = names || [];
+				var keys = [];
+				for(var i=0;i<names.length;i++){
+					keys.push(this.nameKeyMapping[names[i]]);
+				}
+				return keys;
+			},
+			getKeysFromUploadQueue: function(){
+				if(!this.uploadQueue && !this.uploadQueue.length){
+					return [];
+				}
+				var keys = [];
+				for(var i=0;i<this.uploadQueue.length;i++){
+					keys.push(this.uploadQueue[i].key);
+				}
+				return keys;
+			},
+			// 重新设置上传任务
+			resetUploadTask: function(resJson){
+				this.uploadTask = this.createUploadTask();
+				// 从队列中移除成功的数据
+				var success = resJson.data.success || [];
+				if(success && success.length){
+					for(var i=0;i<success.length;i++){
+						for(var j=0;j<this.uploadQueue.length;j++){
+							if(success[i] == this.uploadQueue[j].name){
+								// 移除key与name的映射
+								delete this.nameKeyMapping[this.uploadQueue[j].name];
+								// 从上传队列中移除
+								this.uploadQueue.splice(j,1);
+								break;
+							}
+						}
+					}
+				}
+			},
+			// 当图片上传状态变化时 
+			onImageFileUploadStateChanged: function(upload,status){
+				var me = MaterialMgr;
+				if (upload.state == '4' && status == '200') { // 上传完成
+					me.updateUploadPercentageMessage('100%');
+				}else if(upload.state == '3'){                // 上传中 
+					var uploadSize = parseFloat(upload.uploadedSize),
+						totalSize = parseFloat(upload.totalSize),
+						percentage = Number(((uploadSize/totalSize) * 100)).toFixed(0) + '%';
+					// 更新上传进度百分比信息 
+					me.updateUploadPercentageMessage(percentage);
+				}else{
+					me.updateUploadPercentageMessage('0%');
+				}
+			},
+			// 开始上传
+			startUpload: function(params){
+				if(!this.uploadTask){
+					return false;
+				}
+				// 添加文本参数
+				this.addParamsToUploadTask(params,this.uploadQueue);
+				// 设置图片的进度条
+				this.setImageProgressbar();
+				// 开始上传
+				this.uploadTask.start();
+			},
+			// 显示进度条
+			setImageProgressbar: function(){
+				if(!this.uploadQueue && !this.uploadQueue.length){
+					return false;
+				}
+				var keys = this.getKeysFromUploadQueue();
+				this.updateImageStatus(keys,'addProgressbar');
+			},
+			// 设置公共上传参数
+			setCommonUploadParams: function(task){
+				var params = this.getCommonUploadParams() || {};
+				for(var name in params){
+					task.addData(name,params[name]);
+				}
+			},
+			// 公共上传参数
+			getCommonUploadParams: function(){
+				var user = App.getUserInfo() || {},
+					params = mui.extend({
+					'userId': user.userId || '',
+					'userName': user.userName || '',
+				},App.getCommonParams());
+				return params;
+			},
+			// 添加上传参数（文本参数）
+			addParamsToUploadTask: function(params,images){
+				params = params || {};
+				images = images || [];
+				// 文本参数
+				for(var name in params){
+					this.uploadTask.addData(name,params[name] || '');
+				}
+				// 图片参数
+				this.addImagesFileToUploadTask(images);
+			},
+			// 添加图片问文件参数到上传任务
+			addImagesFileToUploadTask: function(images){
+				if(typeof images == 'object' && images.constructor != Array){
+					images = [images];
+				}
+				// 图片参数
+				for(var i in images){
+					if(!this.uploadTask.addFile(images[i].path || '',images[i])){
+						mui.toast('添加图片失败，图片名称：' + (images[i].name || ''));
+					}
+				}
+			},
+			// 创建图片对象
+			ceateImagesObject: function(paths){
+				if(typeof paths == 'string'){
+					paths = [paths];
+				}
+				var images = [],name = '',fails = [],obj = {};
+				for(var i in paths){
+//					images.push({'key': this.imageKey++,'path': paths[i],'name': this.getImageNameByPath(paths[i])});
+					name = this.getImageNameByPath(paths[i]) || '';
+//					obj = {'path': paths[i],'name': name,'key': name.replace(/\./gi,'_')};
+					obj = {'path': paths[i],'name': name,'key': this.imageKey++};
+					// 如果队列中已存在此name的文件，则不添加
+					if(this.isContainsNameInQueue(obj.name)){
+						fails.push(obj);
+					}else{
+						images.push(obj);
+						// 缓存name与key的关系
+						this.nameKeyMapping[obj.name] = obj.key;
+					}
+				}
+				if(fails && fails.length){
+					var namesStr = '';
+					for(var i=0;i<fails.length;i++){
+						namesStr += fails[i].name + '\n';
+					}
+					namesStr = namesStr.substring(0,namesStr.lastIndexOf('\n'));
+//					plus.nativeUI.alert(namesStr,null,'添加失败，上传列表中已存在');
+					mui.alert(namesStr,'添加失败，上传列表中已存在');
+				}
+				return images;
+			},
+			isContainsNameInQueue: function(name){
+				if(!this.uploadQueue && !this.uploadQueue.length){
+					return false;
+				}
+				for(var i = 0;i<this.uploadQueue.length;i++){
+					if(this.uploadQueue[i].name == name){
+						return true;
+					}
+				}
+				return false;
+			},
+			getImageNameByPath: function(path){
+				return path.substring(path.lastIndexOf('/') + 1);
+			},
+			// 向上传队列里面添加图片
+			addImagesToQueue: function(images){
+				images = images || [];
+				this.uploadQueue = this.uploadQueue.concat(images);
+			},
+			// 从上传队列里面移除
+			removeImagesFromQueue: function(images){
+				if(typeof images == 'object' && images.constructor != Array){
+					images = [images];
+				}
+				images = images || [];
+				for(var i=0;i<images.length;i++){
+					for(var j=0;j<this.uploadQueue.length;j++){
+						if(images[i].key == this.uploadQueue[j].key){
+							this.uploadQueue.splice(j,1);
+							break;
+						}
+					}
+				}
+			},
+			refreshUpload: function(){
+				this.uploadQueue = []; // 重置上传队列
+				this.imageKey = 0;     // 重置上传唯一索引  
+				this.nameKeyMapping = {}; // 重置文件名与唯一索引的键值对
+				this.shelfNumberEle.value = ''; // 重置货架号
+				this.uploadTask.abort();        // 取消当前正在上传的任务  
+				this.uploadTask = this.createUploadTask(); // 重置上传器
+				this.updateUploadPercentageMessage('','hide');  // 重置上传百分比信息
+				this.updateElementsStatus(false); // 修改按钮状态可用
+				this.refreshUploadGrid();
+			},
+			refreshUploadGrid: function(){
+				this.table ? this.table.imgGrid('loadData',[]) : null;
+			},
+			removeAllProgressbar: function(){
+				this.table.imgGrid('removeAllProgressbar');
+			},
+			// 更新上传百分比进度信息
+			updateUploadPercentageMessage: function(msg,type){
+				if(type == 'hide'){
+					this.percentageMsgEle ? this.percentageMsgEle.classList.add('none') : null;
+				}else{
+					this.percentageMsgEle ? this.percentageMsgEle.classList.remove('none') : null;
+				}
+				this.percentageMsgEle ? this.percentageMsgEle.innerHTML = msg || '' : null;
+			},
+			onOpenSelectMode: function(){
+				this.setBackToolbarStatus('show');
+			},
+			// 更新导航栏中的清空按钮的状态（显示或隐藏）
+			updateNavbarStatus: function(type,length){
+				// 更新主页面中的导航栏信息
+				mui.fire(this.getMainWebview(),'updateNavbarStatus',{'type':type,'imageCount': length})
+			},
+		});
+		window.addEventListener('refreshUpload',function(evt){
+			if(MaterialMgr && MaterialMgr.refreshUpload){
+				MaterialMgr.refreshUpload();
+			}
+		});
+		// h5+环境初始化完成
+		mui.plusReady(function(){
+			MaterialMgr.ready();
+		});
+	</script>
+</html>

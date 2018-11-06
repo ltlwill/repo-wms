@@ -1,0 +1,36 @@
+.mui-input-group .mui-input-row:first-child{
+	margin-top: 25px;
+}
+.mui-content-padded{
+	margin-top: 25px;
+}
+.mui-content-padded .mui-btn-block{
+	padding: 10px 0px;
+}
+.user-head-wrapper{
+	margin-top: 25px;
+}
+.user-head-wrapper .user-head{
+    width: 80px;
+    height: 80px;
+    margin: 0px auto;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 80px;
+}
+.user-head-wrapper .user-head .user-img{
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    font-size: 80px;
+}
+.sys-settings{
+	padding: 0px 10px;
+	text-align: center;
+}
+.sys-settings p{
+    margin-bottom: 0px;
+}
+.mui-input-row .mui-input-password~.mui-icon-eye.mui-active{
+	color: #19bcff;
+}

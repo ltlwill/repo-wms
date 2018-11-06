@@ -1,0 +1,58 @@
+{
+  "main.html": {
+    "resources": [
+      "pages/receiving.html"
+    ],
+    "refer": [
+      "pages/receiving.html",
+      "pages/setting.html",
+      "pages/shelves.html",
+      "pages/pickup.html",
+      "pages/query.html",
+      "pages/material.html",
+      "pages/queryStatistics.html",
+      "pages/more.html"
+    ]
+  },
+  "index.html": {
+    "refer": [
+      "main.html",
+      "pages/guide.html",
+      "pages/login.html"
+    ],
+    "resources": []
+  },
+  "pages/setting.html": {
+    "refer": [
+      "pages/userDetail.html"
+    ],
+    "resources": []
+  },
+  "pages/receiving.html": {
+    "refer": [
+      "pages/receiving.html"
+    ],
+    "resources": []
+  },
+  "pages/query.html": {
+    "refer": [
+      "pages/queryList.html"
+    ],
+    "resources": []
+  },
+  "pages/more.html": {
+    "refer": [
+      "pages/setting.html",
+      "pages/picking_off.html"
+    ],
+    "resources": []
+  },
+  "pages/picking_off.html": {
+    "resources": [
+      "pages/picking_off_sub.html"
+    ],
+    "refer": [
+      "pages/picking_off_sub.html"
+    ]
+  }
+}

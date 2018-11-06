@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en" class="feedback">
+	<head>
+		<meta charset="utf-8">
+		<title>query list</title> 
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" type="text/css" href="../css/mui.min.css">
+		<link rel="stylesheet" type="text/css" href="../css/biz/app.css">
+		<link rel="stylesheet" type="text/css" href="../css/app.icon.css">
+		<link rel="stylesheet" type="text/css" href="../css/biz/list.grid.css">
+		<link rel="stylesheet" type="text/css" href="../css/biz/queryList.css">
+	</head> 
+	<body>
+		<header id="header" class="mui-bar mui-bar-nav app-header">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title"></h1>
+			<div class="detail">
+				<span name="warehouseText" class="none"></span>&nbsp;
+				<span name="userName"></span>&nbsp;
+				<span name="sku"></span>&nbsp;
+				<span name="from"></span>
+				<span class="split none">至</span>
+				<span name="to"></span>
+			</div>
+		</header>
+		<!--下拉刷新容器-->
+		<div id="refreshContainer" class="mui-content mui-scroll-wrapper">
+			<div class="mui-scroll">
+				<div class="mui-content">
+					<ul id="table" class="mui-table-view list-grid-table">
+					    <!--<li class="mui-table-view-cell title">
+					    	<div class="mui-row">
+					    		<div class="mui-col-sm-3 mui-col-xs-3">
+					    			SKU
+						        </div>
+						        <div class="mui-col-sm-3 mui-col-xs-3">
+						        	上架时间
+						        </div>
+						        <div class="mui-col-sm-3 mui-col-xs-3">
+						        	状态
+						        </div>
+					    	</div>	
+					    </li>
+					    <li class="mui-table-view-cell body">
+					    	<div class="mui-row">
+					    		<div class="mui-col-sm-4 mui-col-xs-4" field="a">
+					    			111
+						        </div>
+						        <div class="mui-col-sm-4 mui-col-xs-4" field="b">
+						        	2222
+						        </div>
+						        <div class="mui-col-sm-4 mui-col-xs-4" field="c">
+						        	22222222
+						        </div>
+					    	</div>	
+					    </li>
+					    <li class="mui-table-view-cell body">
+					    	<div class="mui-row">
+					    		<div class="mui-col-sm-4 mui-col-xs-4" field="a">
+					    			111
+						        </div>
+						        <div class="mui-col-sm-4 mui-col-xs-4" field="b">
+						        	2222
+						        </div>
+						        <div class="mui-col-sm-4 mui-col-xs-4" field="c">
+						        	22222222
+						        </div>
+					    	</div>
+					    </li>-->	
+					</ul>
+				</div>
+			</div> 
+		</div>
+		<nav class="mui-bar app-bar grid-pager">
+			<ul class="mui-pagination mui-pagination-sm">
+				<li class="mui-previous">
+					<a href="#" event-type="first">
+						首页
+					</a>
+				</li>
+				<li class="mui-previous">
+					<a href="#" event-type="prev">
+						上一页
+					</a>
+				</li>
+				<li class="pagination-info">
+					<a href="#">
+						<div class="page">1/1</div>
+						<div class="total">0</div>
+					</a>
+				</li>
+				<li class="mui-previous">
+					<a href="#" event-type="next">
+						下一页
+					</a>
+				</li>
+				<li class="mui-next">
+					<a href="#" event-type="last">
+						尾页
+					</a>
+				</li>
+			</ul>
+		</nav>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/biz/app.js"></script>
+		<script src="../js/biz/list.grid.js"></script>
+		<script src="../js/biz/biz.js"></script>
+		
+		<script type="text/javascript">
+			// MUI初始化
+			mui.init({
+				swipeBack: true,  // 启用右滑关闭功能
+				pullRefresh : {
+				    container:"#refreshContainer",//下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+				    down : {
+				        style:'circle',//必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式
+//				        color:'#2BD009', //可选，默认“#2BD009” 下拉刷新控件颜色
+						color: '#19bcff',
+				        height:'100px',//可选,默认50px.下拉刷新控件的高度,
+				        range:'150px', //可选 默认100px,控件可下拉拖拽的范围
+				        offset:'0px', //可选 默认0px,下拉刷新控件的起始位置
+				        auto: true,//可选,默认false.首次加载自动上拉刷新一次
+				        callback: pullRefreshTableData //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+				    }
+			    }
+			});
+			function pullRefreshTableData(){ 
+				QueryListMgr.requestParams ? QueryListMgr.requestParams.page = 1 : null; // 重置为第一页
+				QueryListMgr.doRequestData();
+			}
+			// 问题反馈管理对象
+			var QueryListMgr = mui.extend(true,window.Biz,{
+				init: function(){
+	  				QueryListMgr.initEles();
+	  				QueryListMgr.initElesData();
+	  				QueryListMgr.bindEvent();
+  				},
+  				initEles: function(){
+  					this.titleEle = document.querySelector('#header .mui-title');
+  					this.titleSplitEle = document.querySelector('#header .detail .split');
+  					this.details = document.querySelectorAll('#header .detail span');
+  					this.tableEle = mui('#table');
+  					this.pagination = mui('.mui-pagination');
+					this.paginationInfo = mui('.mui-pagination .pagination-info');
+  					this.mask = mui.createMask(this.maskCallback); //callback为用户点击蒙版时自动执行的回调； 
+  				},
+  				initElesData: function(){
+  					var params = this.requestParams = this.getParams(),name = '',
+  						warehouseEle = this.titleEle.parentNode.querySelector('.detail span[name="warehouseText"]');
+  					this.titleEle.innerHTML = params.title || '';	
+  					mui.each(this.details,function(){
+  						name = this.getAttribute('name') || '';
+  						if(name){
+  							this.innerHTML = params[name] || '';
+  						} 
+  					});
+  					if(params._fnType == '3'){
+  						warehouseEle.classList.remove('none');
+  					}else{
+  						warehouseEle.classList.add('none');
+  					}
+  					if(params.from && params.to){
+  						this.titleSplitEle.classList.remove('none');
+  					}else{
+  						this.titleSplitEle.classList.add('none');
+  					}
+  					this.doRequestData();
+  				},
+  				bindEvent: function(){
+  					var me = this;
+  					// 分页按钮事件
+					me.pagination.on('tap','a',function(){
+						me.doPagination(this);
+					});
+  				},
+  				// 分页操作 
+				doPagination: function(ele){
+					var type = ele.getAttribute('event-type') || '',
+						disabled = ele.parentNode.classList.contains('mui-disabled');
+					if(disabled){
+						return false;
+					}
+					var params = {};
+					this._requestParams = mui.extend({},this.requestParams);// 缓存上一次的分页信息
+					if((type == 'first' || type == 'prev') 
+						&& this._requestParams.page == 1){
+						mui.toast('已经是第一页了');
+						return false;
+					}else if((type == 'next' || type == 'last') 
+						&& this._requestParams.pages == this._requestParams.page){
+						mui.toast('已经是最后一页了');
+						return false;
+					}
+					if(type == 'first'){
+						params.page = 1;
+					}else if(type == 'prev'){
+						params.page = this.requestParams.page == 1 
+							? 1 : this.requestParams.page - 1;
+					}else if(type == 'next'){
+						params.page = this.requestParams.page == this.requestParams.pages 
+							? this.requestParams.pages : this.requestParams.page + 1;
+					}else if(type == 'last'){
+						params.page = this.requestParams.pages;
+					}
+					// 更新分页参数
+					mui.extend(this.requestParams,params);
+					// 触发请求
+					this.doRequestData();
+				},
+  				getParams: function(){
+  					var wm = plus.webview.currentWebview();
+  					return mui.extend(wm ? wm.params || {} : {},{'page':1,'page_size':20,'pages':1});
+  				},
+  				doRequestData: function(){
+  					var me = this,
+//						params = me.getParams();
+  						params = this.requestParams || {};
+  					// 提交数据		  
+//					mui.doGet(App.createUrl("/track/getTrackList"),params,function(result){
+					mui.doGet(App.createUrl(params._requestUrl),params,function(result){
+						result = result || {};
+						if(result.errcode == '0'){
+							me.createTable(result,params._fnType);
+							if(params._fnType != '3'){
+								result.data = {'current_page':1,'page_count':1,'total_count': result.data.length};
+							}
+							me.updatePaginationInfo(result);
+						}else{
+							mui.alert('查询失败' + (result.errmsg ? (',' + result.errmsg) : ''));
+							mui.extend(me.requestParams,me._requestParams);// 恢复到上一次的信息
+						}
+					},function(xhr,a,b,c){ 
+						mui.extend(me.requestParams,me._requestParams);// 恢复到上一次的信息
+						var errMsg = me.getServerErrorMsg(xhr);
+						mui.alert('查询失败,' + errMsg);
+					},{'beforeSend': function(){ 
+//						me.mask.show();//显示遮罩
+//						me._waiting_ = plus.nativeUI.showWaiting('加载中...', {loading:{display:"inline"}});
+					},'complete': function(){
+//						me.mask.close();//关闭遮罩 
+//						me._waiting_ ? me._waiting_.close() : null;
+						mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+					}});
+  				},
+  				updatePaginationInfo: function(result){
+  					var me = this,data = result.data || {};
+  					mui.extend(me.requestParams,{'pages': result.data.page_count || 0});
+  					this.paginationInfo[0].querySelector('div.page').innerHTML = (data.current_page || 1) + '/' + (data.page_count || 1);
+  					this.paginationInfo[0].querySelector('div.total').innerHTML = (data.total_count || 0);
+  				},
+  				getTableCols: function(fnType){
+  					switch(fnType){
+  						case '1':
+  							return [
+  							{'field': 'track_no','title': '跟踪号'},
+  							{'field': 'created_at','title': '收件时间'},
+  							{'field': 'status','title': '状态'}];
+  						case '2':
+  							return [];
+  						case '3':
+  							return [
+  							{'field': 'trackingNum','title': '货架号'},
+  							{'field': 'sku','title': 'SKU'},
+  							{'field': 'count','title': '数量','titleFormatter': function(col,data,extraData){
+  								extraData = extraData || {};
+  								return col.title + '(' + (extraData.sum || 0) +')';
+  							}},
+  							{'field': 'userName','title': '上架人'},
+  							{'field': 'date','title': '时间'}];
+  						default:
+  							return [];
+  					}
+  				}, 
+  				createTable: function(result,fnType){
+  					var me = this,cols = me.getTableCols(fnType),
+  						rows = fnType == '3' ? result.data.datas : result.data,
+  						sum = fnType == '3' ? result.data.sum || 0 : 0;
+  					me.tableEle.listGrid({'data': rows,'columns': cols,'extraData': {'sum': sum}});
+  				}, 
+  				maskCallback: function(a){
+  				} 
+			});
+			// DOM初始化完成
+			mui.plusReady(function(){
+				QueryListMgr.ready(); 
+			});
+		</script>
+	</body>
+</html>

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>查询</title> 
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/mui.picker.min.css">
+		<link rel="stylesheet" href="../css/biz/app.css" />
+		<link rel="stylesheet" href="../css/app.icon.css">
+		<link rel="stylesheet" href="../css/biz/list.grid.css">
+		<link rel="stylesheet" href="../css/biz/query.css"/>
+	</head>
+	<body>
+		<!-- 内容区域 -->
+		<!--<div class="mui-content">-->
+		<div id="slider" class="mui-slider">
+			<div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+				<a class="mui-control-item mui-active" href="#itemContent1" type="1">收件查询</a>
+				<a class="mui-control-item" href="#itemContent2" type="2">取件查询</a>
+				<a class="mui-control-item" href="#itemContent3" type="3">上架查询</a>
+				<a class="mui-control-item" href="#itemContent4" type="4">扫码查询</a>
+			</div>
+			<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-3"></div>
+			<div class="mui-slider-group app-slider-group">
+				<div id="itemContent1" class="mui-slider-item mui-control-content mui-active">
+					<div id="scroll1" class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<form class="mui-input-group">
+								<div class="mui-input-row">
+								    <input name="userName" type="text" class="mui-input-clear" placeholder="请输入收件人名称">
+								</div>
+					    		<div class="mui-row mui-input-row time-input-row">
+					    			<div class="mui-col-sm-6 mui-col-xs-6 input-wrapper">
+							    		<div class="mui-input-row">
+									        <input name="from" type="text" class="mui-input-clear date-input" readonly placeholder="选择起始日期"/>
+									    </div>
+							        </div>
+							        <div class="mui-col-sm-6 mui-col-xs-6 input-wrapper">
+							    		<div class="mui-input-row">
+									        <input name="to" type="text" class="mui-input-clear date-input" readonly placeholder="选择截止日期"/>
+									    </div>
+							        </div>
+							    </div>
+						    </form>
+						    <div class="block-btn-wrapper">
+								<button id="btn_search" type="button" title="收件查询" class="mui-btn mui-btn-blue mui-btn-block submit-btn">查询</button>							    	
+						    </div>
+						</div>
+					</div>
+				</div>
+				<div id="itemContent2" class="mui-slider-item mui-control-content">
+					<div id="scroll2" class="mui-scroll-wrapper">
+						<div class="mui-scroll" style="text-align: center;color: red;">
+							开发中，敬请期待
+						</div>
+					</div>
+				</div>
+				<div id="itemContent3" class="mui-slider-item mui-control-content">
+					<div id="scroll3" class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<form class="mui-input-group">
+								<div class="mui-input-row">
+									<button class="mui-btn mui-btn-block dropdown-button" type='button' storeHouse="SZ">深圳仓</button>
+							    	<span class="mui-icon mui-icon-arrowdown dropselect"></span>
+								</div>
+								<div class="mui-input-row">
+								    <input name="userName" type="text" class="mui-input-clear" placeholder="请输入上架人名称">
+								</div>
+								<div class="mui-input-row">
+								    <input name="sku" type="text" class="mui-input-clear" placeholder="请输入SKU">
+								</div>
+					    		<div class="mui-row mui-input-row time-input-row">
+					    			<div class="mui-col-sm-6 mui-col-xs-6 input-wrapper">
+							    		<div class="mui-input-row">
+									        <input name="from" type="text" class="mui-input-clear date-input" readonly placeholder="选择起始日期"/>
+									    </div>
+							        </div>
+							        <div class="mui-col-sm-6 mui-col-xs-6 input-wrapper">
+							    		<div class="mui-input-row">
+									        <input name="to" type="text" class="mui-input-clear date-input" readonly placeholder="选择截止日期"/>
+									    </div>
+							        </div>
+							    </div>
+						    </form>
+						    <div class="block-btn-wrapper">
+								<button id="btn_search" type="button" title="上架查询" class="mui-btn mui-btn-blue mui-btn-block submit-btn">查询</button>							    	
+						    </div>
+						</div>
+					</div>
+				</div>
+				<div id="itemContent4" class="mui-slider-item mui-control-content">
+					<div id="scroll4" class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<div class="mui-input-group">
+								<div class="mui-input-row">
+									<button class="mui-btn mui-btn-block dropdown-button" type='button' storeHouse="SZ">深圳仓</button>
+							    	<span class="mui-icon mui-icon-arrowdown dropselect"></span>
+								</div>
+								<div class="mui-input-row">
+								    <input id="scan_result" name="scan_result" type="text" class="mui-input-clear" placeholder="请输入货架号、SKU">
+								</div>
+								<div class="mui-input-row table-wrapper none">
+									<ul id="scan_result_table" class="mui-table-view">
+										<!--<li class="mui-table-view-cell title">
+									    	<div class="mui-row">
+									    		<div class="mui-col-sm-4 mui-col-xs-4">
+									    			222
+										        </div>
+										        <div class="mui-col-sm-4 mui-col-xs-4">
+										        	2223
+										        </div>
+										        <div class="mui-col-sm-4 mui-col-xs-4">
+										        	代收件
+										        </div>
+									    	</div>	
+									    </li>
+									    <li class="mui-table-view-cell">
+									    	<div class="mui-row">
+									    		<div class="mui-col-sm-4 mui-col-xs-4">
+									    			9L-415
+										        </div>
+										        <div class="mui-col-sm-4 mui-col-xs-4">
+										        	10040898
+										        </div>
+										        <div class="mui-col-sm-4 mui-col-xs-4">
+										        	<img src="http://image.hengzhiyi.cn/iupload/10052156 (6).JPG" alt="无效图片地址" style="height:60px;width:60px;"/>
+										        </div>
+									    	</div>	
+									    </li>-->
+								   </ul>
+								</div>
+								<div class="message none">
+							    	<span id="scan_result_message"></span>	
+						    	</div>
+						    </div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="../js/mui.js"></script>
+	<script src="../js/mui.picker.min.js"></script>
+	<script src="../js/biz/app.js"></script>
+	<script src="../js/biz/list.grid.js"></script>
+	<script src="../js/biz/biz.js"></script>
+	<script>
+		mui.init({
+			swipeBack: false
+		});
+		mui.ready(function(){
+			window.onresize = function(){
+				calcContentHeight();
+			};
+//			mui.trigger(window,'resize');
+			calcContentHeight();
+			function calcContentHeight(){
+				var wh = window.innerHeight,
+					items = document.querySelectorAll('.mui-slider-group > .mui-slider-item');
+				mui.each(items,function(i,o){
+					this.style.height = (wh - 40) + 'px';
+				});
+			}
+		});
+		// 查询管理对象
+		var QueryMgr = mui.extend(true,window.Biz,{
+			options: {
+			},
+			init: function(){
+				QueryMgr.initEles();
+				QueryMgr.initElesData();
+				QueryMgr.bindEvent();
+			},
+			initEles: function(){
+				this.scanResultEle = mui("#scan_result");
+				this.scanResultTableEle = mui("#scan_result_table");
+				this.scanMsgEle = mui('#scan_result_message');
+				mui('.mui-scroll-wrapper').scroll({indicators: true});//是否显示滚动条
+				this.storeHousePicker = new mui.PopPicker();
+				this.skuReg = new RegExp('^[0-9]{8}$');
+			},
+			initElesData: function(){ 
+				var user = App.getUserInfo() || {};
+				mui.each(mui('input[name="userName"]'),function(){
+					this.value = user ? user.nickName : '';
+				});
+				var storeHouseData = [
+					{'value': 'SZ','text': '深圳仓'},
+					{'value': 'HB','text': '松滋仓'},
+					{'value': 'UK','text': '英国仓'},
+					{'value': 'US','text': '美国仓'},
+					{'value': 'MD','text': '门店'}, 
+				];
+				this.storeHousePicker.setData(storeHouseData);
+			},
+			bindEvent: function(){
+				var me = this;
+				document.addEventListener('keyup',function(evt){
+					if(me.isEnterKey(evt) && evt.srcElement.name == 'scan_result'){
+						me.doScanInputBusiness(evt.srcElement);
+					}
+					evt.stopPropagation();
+					evt.preventDefault();
+				});
+				mui.each(mui('.mui-slider-group input.date-input'),function(){
+					this.value = me.formatDate();
+				});
+				mui('.mui-slider-group').on('tap','input.date-input',function(){
+					me.doSelectDate(this);
+				});
+				var btns = document.querySelectorAll('button.submit-btn');
+				mui.each(btns,function(){
+					this.addEventListener('tap',function(){
+						me.doSearch(this);
+					});
+				});
+				mui.each(document.querySelectorAll('button.dropdown-button'),function(){
+					this.addEventListener('tap',function(evt){
+						var t = this;
+						me.storeHousePicker.show(function(items) {
+							t.setAttribute('storeHouse',items[0].value);
+							t.innerText = items[0].text;
+						});	
+					},false);
+				});
+				mui.each(document.querySelectorAll('span.dropselect'),function(){
+					this.addEventListener('tap',function(evt){
+						mui.trigger(this.parentNode.querySelector('button.dropdown-button'),'tap');
+					},false);
+				});
+				me.scanResultEle[0].addEventListener('input',function(){
+					if(this.value == '' || this.value == null || this.value.trim() == ''){
+						me.resetScanTableStatus('hide');
+						me.resetScanMsg('','hide');
+					}
+				},false);
+				me.scanResultEle[0].parentNode.querySelector('span.mui-icon-clear').addEventListener('tap',function(){
+					var val = this.parentNode.querySelector('input').value;
+					if(val == '' || val == null || val.trim() == ''){
+						me.resetScanTableStatus('hide');
+						me.resetScanMsg('','hide');
+					}
+				},false);
+			}, 
+			doSelectDate: function(ele){
+				var me = this,opts = {"type":"date"};
+				if(!ele._picker){
+					ele._picker = new mui.DtPicker(opts);
+				}
+				ele._picker.show(function(rs) {
+					ele.value = rs.text || '';
+					ele._picker.dispose(); 
+					ele._picker = null;
+				});
+			},
+			doSearch: function(ele){
+				var params = this.getQueryParams(ele);
+				if(!this.validateParams(params)){
+					return false;
+				}
+				this.openQueryListWindow(params);
+			},
+			doScanInputBusiness: function(ele){
+				var me = this,
+					val = ele.value ? ele.value.trim() : '',
+					isSku = this.skuReg.test(val),
+					warehouse = ele.parentNode.parentNode.querySelector('button.dropdown-button').getAttribute('storeHouse'),
+					params = {'scan_result': val,'warehouse': warehouse},
+					url = isSku ? '/track/scanForSku' : '/track/scanForWscode';
+				if(val == null || val == ''){
+					return false;
+				}
+				mui.doGet(App.createUrl(url),params,function(result){
+						result = result || {};
+						me.resetScanMsg('','hide');
+						me.setScanInputSelected();
+						if(result.errcode == '0'){
+							me.resetScanTableStatus('show');
+							me.createScanTable(result.data || [],isSku);
+						}else{
+							mui.alert('查询失败' + (result.errmsg ? (',' + result.errmsg) : ''));
+						}
+					},function(xhr,a,b,c){
+						var errMsg = me.getServerErrorMsg(xhr);
+						mui.alert('查询失败,' + errMsg);
+					},{'beforeSend': function(){ 
+						me.resetScanTableStatus('hide');
+						me.resetScanMsg('正在查询...','show');
+					},'complete': function(){
+						me.resetScanMsg('','hide');
+						me.setScanInputSelected();
+					}
+				});
+			},
+			resetScanTableStatus: function(type){
+				if(type == 'show'){
+					this.scanResultTableEle[0].parentNode.classList.remove('none');
+				}else{
+					this.scanResultTableEle[0].classList.add('none');
+				}
+			},
+			resetScanMsg: function(msg,type){
+				if(type == 'show'){
+					this.scanMsgEle[0].parentNode.classList.remove('none');
+				}else{
+					this.scanMsgEle[0].parentNode.classList.add('none');
+				}
+				this.scanMsgEle[0].innerHTML = msg || '';
+			},
+			getScanResultTableCols: function(isSku){
+				if(isSku){
+					return [{'field': 'trackingNum','title': '货架号'},{'field': 'sku','title': 'SKU'},{'field': 'sum','title': '数量'}];
+				}else{
+					return [{'field': 'sku','title': 'SKU'},{'field': 'sum','title': '数量'},{'field': 'image','title': '图片','formatter': function(val,row){
+						return '<img src="' + val + '" alt="无效图片地址" style="border:solid 1px #c8c7cc;height:40px;width:40px;"/>';
+					}}]; 
+				}
+			}, 
+			setScanInputSelected: function(){
+				this.scanResultEle[0].select();
+			},
+			createScanTable: function(rows,isSku){
+				var cols = this.getScanResultTableCols(isSku);
+				this.scanResultTableEle.listGrid({'data': rows,'columns': cols});
+			},
+			getQueryParams: function(btn){
+				var p = btn.parentNode.parentNode,
+					form = p.querySelector('.mui-input-group'),
+					inps = form.querySelectorAll('input'),
+					spBtn = form.querySelector('button.dropdown-button'),
+					params = {'title': btn.getAttribute('title') || '',
+						'_requestUrl': this.getRequestUrl(),
+						'_fnType': this.getCurrentType(),
+						'warehouse': spBtn ? spBtn.getAttribute('storeHouse') || '' : '',
+						'warehouseText': spBtn ? spBtn.innerText || '' : ''}; 
+				mui.each(inps,function(){
+					if(this.name){ 
+						params[this.name] = this.value ? this.value.trim() : '';
+					}
+				});
+				return params;
+			},
+			validateParams: function(params){
+				var type = this.getCurrentType(),
+					uNameMgs = '';
+				switch(type){
+					case '1':
+						uNameMgs = '请输入收件人名称'
+						break;
+					case '2': 
+						uNameMgs = '请输入取件人名称';
+						break;
+					case '3': 
+						uNameMgs = '请输入收件人名称';
+						break;
+				}
+				if(type != '3' && !params.userName){
+					mui.toast(uNameMgs); 
+					return false;
+				}
+				if(!params.from && !params.to){
+					mui.toast('请选择起始时间和截止时间'); 
+					return false;
+				}
+				if(!params.from){
+					mui.toast('请选择起始时间'); 
+					return false;
+				}
+				if(!params.to){
+					mui.toast('请选择截止时间');
+					return false;
+				}
+				return true;
+			},
+			openQueryListWindow: function(params){
+				mui.openWindow({
+					id: App.webviews.queryList.id,
+					url: App.webviews.queryList.url,
+					style: {
+//						scrollIndicator: 'none'  // 不显示滚动条
+					},
+					show:{ 
+						aniShow:'slide-in-right' // 从右侧横向滑动效果
+					},
+					waiting:{
+						autoShow:false 
+					},
+					extras: {'params' : params || {}},
+				});
+			},
+			// 获取当前查询类型
+			getCurrentType: function(){
+				return document.querySelector('.mui-slider-indicator a.mui-active').getAttribute('type');
+			},
+			getRequestUrl: function(){
+				var type = this.getCurrentType();
+				switch(type){
+					case '1':
+						return '/track/getTrackList';     // 收件查询URL
+					case '2': 
+						return '';                        // 取件查询URL
+					case '3': 
+//						return '/track/getPutawayRecord'; // 上架查询URL
+						return '/track/pda_onshelf_log';
+					default:
+						return '';
+				}
+			},
+			formatDate: function(date){
+				date = date ? date : new Date();
+				return date.getFullYear() + '-' + format(date.getMonth() + 1) + '-' + format(date.getDate());
+				function format(num){
+					return num >= 10 ? num : '0' + num;
+				}
+			}
+		});
+		// h5+环境初始化完成
+		mui.plusReady(function(){
+			QueryMgr.ready();
+		});
+	</script>
+</html>

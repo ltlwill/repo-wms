@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>建料</title> 
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/mui.picker.min.css">
+		<link rel="stylesheet" href="../css/mui.poppicker.css">
+		<link rel="stylesheet" href="../css/biz/app.css" />
+		<link rel="stylesheet" href="../css/app.icon.css">
+		<link rel="stylesheet" href="../css/biz/material.css"/>
+	</head>
+	<style>
+	</style>
+	<body>
+		<!-- 内容区域 -->
+		<div class="mui-content">
+			
+		</div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/mui.picker.min.js"></script>
+	<script src="../js/mui.poppicker.js"></script> 
+	<script src="../js/biz/app.js"></script>
+	<script src="../js/biz/biz.js"></script>
+	<script>
+		mui.init({
+			gestureConfig:{
+				longtap:true
+			}
+		});
+		// 建料管理对象
+		var MaterialMgr = mui.extend(true,window.Biz,{
+			options: {
+			},
+			init: function(){
+				MaterialMgr.initEles();
+				MaterialMgr.initElesData();
+				MaterialMgr.bindEvent();
+			},
+			initEles: function(){
+				
+			},
+			initElesData: function(){ 
+				
+			},
+			bindEvent: function(){
+				
+			},
+		});
+		// h5+环境初始化完成
+		mui.plusReady(function(){
+			MaterialMgr.ready();
+		});
+	</script>
+</html>

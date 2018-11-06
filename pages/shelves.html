@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>上架</title> 
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/mui.picker.min.css">
+		<link rel="stylesheet" href="../css/mui.poppicker.css">
+		<link rel="stylesheet" href="../css/biz/app.css" />
+		<link rel="stylesheet" href="../css/app.icon.css">
+		<link rel="stylesheet" href="../css/biz/shelves.css"/>
+	</head>
+
+	<body>
+		<!-- 内容区域 -->
+		<div id="slider" class="mui-slider">
+			<div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+				<a class="mui-control-item mui-active" href="#itemContent0">取货</a>
+				<a class="mui-control-item" href="#itemContent1">上架</a>
+				<!--<a class="mui-control-item" href="#itemContent2">收货上架</a>-->
+				<a class="mui-control-item" href="#itemContent3">退货上架</a>
+			</div>
+			<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-4"></div>
+			<div class="mui-slider-group app-slider-group">
+				<div id="itemContent0" class="mui-slider-item mui-control-content mui-active" type="PICKUP">
+					<div id="scroll0" class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<div class="form-container">
+								<form class="mui-input-group">
+									<div class="mui-row">
+										<button id='storeHousePickerBtn' class="mui-btn mui-btn-block" type='button' storeHouse="SZ">深圳仓</button>
+								    	<span id="storeHouseIcon" class="mui-icon mui-icon-arrowdown dropselect"></span>
+									</div>
+								    <div class="mui-row mui-input-row input-area">
+								    	<div class="mui-col-sm-5 mui-col-xs-5 input-wrapper">
+								    		<div class="mui-input-row textarea-row-wrapper">
+										        <textarea id="message_input" class="mui-input-row textarea-row" rows="2" placeholder="请输入SKU" ></textarea>
+										    </div>
+								        </div>
+								        <div class="mui-col-sm-7 mui-col-xs-7 item-wrapper">
+								        	<!--<div class="item">
+							        			<span class="title">货架:</span>
+							        			<span id="shelfNumber" class="text"></span>
+							        			<span id="btn_split" class="mui-icon mui-icon-plus btn"></span>
+								        	</div>-->
+								        	<div class="item pt10">
+								        		<span class="title">SKU:</span>
+								        		<span id="sku" class="text"></span>
+								        	</div>
+								        	<div class="item">
+								        		<span class="title">数量:</span>
+							        			<div id="qty" class="text qty-selector"></div>
+								        	</div>
+								        </div>
+								    </div>	
+								    <div id="originShelfNumberWrapper" class="mui-row content-wrapper row-wrapper">
+								    	<div class="content pd-content">
+								    		<span>货架号:</span>
+								    		<span id="originShelfNumber"></span>
+								    	</div>
+									</div>
+									<div id="selectQtyWrapper" class="mui-row content-wrapper row-wrapper checkbox-wrapper">
+								    	<div class="content pd-content">
+								    		<!--<div class="mui-input-row mui-checkbox mui-left select-all">
+											  <input name="checkbox1" value="Item 1" type="checkbox">
+											  <label>数量</label>
+											</div>
+											<div class="mui-input-row mui-checkbox mui-left">
+											  <label>33</label>
+											  <input name="checkbox1" value="Item 1" type="checkbox">
+											</div>
+											<div class="mui-input-row mui-checkbox mui-left">
+											  <label>48898</label>
+											  <input name="checkbox1" value="Item 1" type="checkbox">
+											</div>
+											<div class="mui-input-row mui-checkbox mui-left">
+											  <label>999</label>
+											  <input name="checkbox1" value="Item 1" type="checkbox">
+											</div>
+											<div class="mui-input-row mui-checkbox mui-left">
+											  <label>999</label>
+											  <input name="checkbox1" value="Item 1" type="checkbox">
+											</div>-->
+								    	</div>
+									</div>
+									<div id="addShelftNumWrapper" class="mui-row content-wrapper row-wrapper">
+								    	<div class="content">
+										</div>	
+									</div>
+								</form>
+								<div class="message">
+							    	<span id="message"></span>	
+						    	</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="itemContent1" class="mui-slider-item mui-control-content" type="SZPICKUP">
+					<div id="scroll1" class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<div class="form-container">
+								<form class="mui-input-group">
+									<div class="mui-row">
+										<button id='storeHousePickerBtn' class="mui-btn mui-btn-block" type='button' storeHouse="SZ">深圳仓</button>
+								    	<span id="storeHouseIcon" class="mui-icon mui-icon-arrowdown dropselect"></span>
+									</div>
+								    <div class="mui-row mui-input-row input-area">
+								    	<div class="mui-col-sm-5 mui-col-xs-5 input-wrapper">
+								    		<div class="mui-input-row textarea-row-wrapper">
+										        <textarea id="message_input" class="mui-input-row textarea-row" rows="2" placeholder="请输上架信息" ></textarea>
+										    </div>
+								        </div>
+								        <div class="mui-col-sm-7 mui-col-xs-7 item-wrapper">
+								        	<div class="item pt10">
+							        			<span class="title">货架:</span>
+							        			<span id="shelfNumber" class="text"></span>
+							        			<!--<span id="btn_split" class="mui-icon mui-icon-plus btn"></span>-->
+								        	</div>
+								        	<div class="item">
+								        		<span class="title">SKU:</span>
+								        		<span id="sku" class="text"></span>
+								        	</div>
+								        	<!--<div class="item">
+								        		<span class="title">数量:</span>
+							        			<div id="qty" class="text qty-selector"></div>
+								        	</div>-->
+								        </div>
+								    </div>	
+								    <div id="originShelfNumberWrapper" class="mui-row content-wrapper row-wrapper">
+								    	<div class="content pd-content">
+								    		<span>货架号:</span>
+								    		<span id="originShelfNumber"></span>
+								    	</div>
+									</div>
+									<div id="addShelftNumWrapper" class="mui-row content-wrapper row-wrapper">
+								    	<div class="content">
+										</div>	
+									</div>
+								</form>
+								<div class="message">
+							    	<span id="message"></span>	
+						    	</div>
+						    	<div id="unOnShelf" class="mui-text-center">
+						    		<div class="h_title mui-row mui-text-left">已取货未上架信息
+						    			<i class="mui-icon mui-icon-reload mui-pull-right" id="tpReload"></i>
+						    		</div>
+						    		<ul class="mui-table-view">
+						    			
+									    <li class="mui-table-view-cell" id="unOnShelfListHd">
+									    	<div class="mui-row">
+									    		<span class="mui-col-sm-4 mui-col-xs-4">SKU</span><span class="mui-col-sm-4 mui-col-xs-4">货架号</span><span class="mui-col-sm-4 mui-col-xs-4">数量</span>
+									    	</div>
+									    </li>
+									</ul>
+							    	<ul class="mui-table-view" id="unOnShelfList">
+									    
+									</ul>
+									<p id="tpMsg" class="mui-text-center"></p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--<div id="itemContent2" class="mui-slider-item mui-control-content" type="PURCHASE">
+					<div id="scroll2" class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<div class="form-container">
+								<form class="mui-input-group">
+									<div class="mui-row">
+										<button id='storeHousePickerBtn' class="mui-btn mui-btn-block" type='button' storeHouse="SZ">深圳仓</button>
+								    	<span id="storeHouseIcon" class="mui-icon mui-icon-arrowdown dropselect"></span>
+									</div>
+								    <div class="mui-row mui-input-row input-area">
+								    	<div class="mui-col-sm-5 mui-col-xs-5 input-wrapper">
+								    		<div class="mui-input-row textarea-row-wrapper">
+										        <textarea id="message_input" class="mui-input-row textarea-row" rows="2" placeholder="请输上架信息" value="" ></textarea>
+										    </div>
+								        </div>
+								        <div class="mui-col-sm-7 mui-col-xs-7 item-wrapper">
+								        	<div class="item">
+							        			<span class="title">货架:</span>
+							        			<span id="shelfNumber" class="text"></span>
+							        			<span id="btn_split" class="mui-icon mui-icon-plus btn"></span>
+								        	</div>
+								        	<div class="item">
+								        		<span class="title">SKU:</span>
+								        		<span id="sku" class="text"></span>
+								        	</div>
+								        	<div class="item">
+								        		<span class="title">数量:</span>
+							        			<div id="qty" class="text qty-selector"></div>
+								        	</div>
+								        </div>
+								    </div>	
+								    <div id="originShelfNumberWrapper" class="mui-row content-wrapper row-wrapper">
+								    	<div class="content pd-content">
+								    		<span>货架号:</span>
+								    		<span id="originShelfNumber"></span>
+								    	</div>
+									</div>
+									<div id="selectQtyWrapper" class="mui-row content-wrapper row-wrapper checkbox-wrapper">
+								    	<div class="content pd-content">
+								    		<div class="mui-input-row mui-checkbox mui-left select-all">
+											  <input name="checkbox1" value="Item 1" type="checkbox">
+											  <label>数量</label>
+											</div>
+											<div class="mui-input-row mui-checkbox mui-left">
+											  <label>33</label>
+											  <input name="checkbox1" value="Item 1" type="checkbox">
+											</div>
+											<div class="mui-input-row mui-checkbox mui-left">
+											  <label>48898</label>
+											  <input name="checkbox1" value="Item 1" type="checkbox">
+											</div>
+											<div class="mui-input-row mui-checkbox mui-left">
+											  <label>999</label>
+											  <input name="checkbox1" value="Item 1" type="checkbox">
+											</div>
+											<div class="mui-input-row mui-checkbox mui-left">
+											  <label>999</label>
+											  <input name="checkbox1" value="Item 1" type="checkbox">
+											</div>
+								    	</div>
+									</div>
+									<div id="addShelftNumWrapper" class="mui-row content-wrapper row-wrapper">
+								    	<div class="content">
+										</div>	
+									</div>
+								</form>
+								<div class="message">
+							    	<span id="message"></span>	
+						    	</div>
+							</div>
+						</div>
+					</div>
+				</div>-->				
+				<div id="itemContent3" class="mui-slider-item mui-control-content" type="RETURNS">
+					<div id="scroll3" class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<div class="form-container">
+								<form class="mui-input-group">
+									<div class="mui-row">
+										<button id='storeHousePickerBtn' class="mui-btn mui-btn-block" type='button' storeHouse="SZ">深圳仓</button>
+								    	<span id="storeHouseIcon" class="mui-icon mui-icon-arrowdown dropselect"></span>
+									</div>
+								    <div class="mui-row mui-input-row input-area">
+								    	<div class="mui-col-sm-5 mui-col-xs-5 input-wrapper">
+								    		<div class="mui-input-row textarea-row-wrapper">
+										        <textarea id="message_input" class="mui-input-row textarea-row" rows="2" placeholder="请输上架信息" value=""></textarea>
+										    </div>
+								        </div>
+								        <div class="mui-col-sm-7 mui-col-xs-7 item-wrapper">
+								        	<div class="item">
+							        			<span class="title">货架:</span>
+							        			<span id="shelfNumber" class="text"></span>
+							        			<span id="btn_split" class="mui-icon mui-icon-plus btn"></span>
+								        	</div>
+								        	<div class="item">
+								        		<span class="title">SKU:</span>
+								        		<span id="sku" class="text"></span>
+								        	</div>
+								        	<!--<div class="item"><span class="title">数量:</span><span id="qty" class="text">9999</span></div>-->
+								        	<div class="item">
+								        		<span class="title">数量:</span>
+							        			<div id="qty" class="text qty-selector"></div>
+								        	</div>
+								        </div>
+								    </div>	
+								    <div id="originShelfNumberWrapper" class="mui-row content-wrapper row-wrapper">
+								    	<div class="content pd-content">
+								    		<span>货架号:</span>
+								    		<span id="originShelfNumber"></span>
+								    	</div>
+									</div>
+									<div id="selectQtyWrapper" class="mui-row content-wrapper row-wrapper checkbox-wrapper">
+								    	<div class="content pd-content">
+								    	</div>
+									</div>
+									<div id="addShelftNumWrapper" class="mui-row content-wrapper row-wrapper">
+								    	<div class="content">
+										</div>	
+									</div>
+								</form>
+								<div class="message">
+							    	<span id="message"></span>	
+						    	</div>
+							</div>
+						</div> 
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="biz-btn-groups">
+			<button id="resetBtn" type="button" class="mui-btn mui-btn-primary">重置</button>
+			<button id="sendBtn" type="button" class="mui-btn mui-btn-primary">上架</button>
+		</div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/mui.picker.min.js"></script>
+	<script src="../js/mui.poppicker.js"></script> 
+	<script src="../js/biz/app.js"></script>
+	<script src="../js/biz/biz.js"></script>
+	<script>
+		mui.init({
+			gestureConfig:{
+				longtap:true
+			}
+		});
+		mui.ready(function(){
+			window.onresize = function(){
+				calcContentHeight();
+			};
+			calcContentHeight();
+			function calcContentHeight(){
+				var wh = window.innerHeight,
+					items = document.querySelectorAll('.mui-slider-group > .mui-slider-item');
+				mui.each(items,function(i,o){
+					this.style.height = (wh - 40) + 'px';
+				});
+			}
+		});
+		// 收货管理对象
+		var ShelvesMgr = mui.extend(true,window.Biz,{
+			options: {
+			},
+			init: function(){
+				ShelvesMgr.initEles();
+				ShelvesMgr.initElesData();
+				ShelvesMgr.bindEvent();
+			},
+			initEles: function(){
+				this.constants = {'PICKUP': '0','PURCHASE': '1','RETURNS': '2','SZPICKUP':'3'}; // 常量PICKUP:取货上架，PURCHASE:收货上架，RETURNS:退货上架 ，SZPICKUP:深圳取货上架
+				this.eles = {
+					msgInputEle: '#message_input',
+					shelfNumEle: '#shelfNumber',
+					skuEle: '#sku',
+					qtyEle: '#qty',
+					splitBtnEle: '#btn_split',
+					messageEle: '#message',
+					originShelfNumEleWrapperEle: '#originShelfNumberWrapper',
+					originShelfNumberEle: '#originShelfNumber',
+					selectQtyWrapperEle: '#selectQtyWrapper',
+					selectQtyContentEle: '.content',
+					addShelftWrapperEle: '#addShelftNumWrapper',
+					addShelftContentEle: '.content-wrapper .content',
+					storeHousePickerBtn: '#storeHousePickerBtn',
+					storeHouseDropIcon: '#storeHouseIcon'
+				};
+				this.msgInputEles = document.querySelectorAll(this.eles.msgInputEle);
+				this.qtyEles = document.querySelectorAll(this.eles.qtyEle);
+				this.resetBtnEle = document.querySelector('#resetBtn');
+				this.splitBtnEles = document.querySelectorAll(this.eles.splitBtnEle);
+				this.skuReg = new RegExp('^[0-9]{8}$');
+				this.shelfNumReg = new RegExp('^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z_-]{1,}$');
+				this.qtyReg = new RegExp('^\\d{1,7}$');
+				this.storeHousePickerBtns = document.querySelectorAll(this.eles.storeHousePickerBtn);
+				this.storeHouseDropIcons = document.querySelectorAll(this.eles.storeHouseDropIcon);
+				this.storeHousePicker = new mui.PopPicker();
+				mui('.mui-scroll-wrapper').scroll({indicators: true});//是否显示滚动条
+			},
+			initElesData: function(){ 
+				var storeHouseData = [
+					{'value': 'SZ','text': '深圳仓'},
+					{'value': 'HB','text': '松滋仓'},
+					{'value': 'UK','text': '英国仓'},
+					{'value': 'US','text': '美国仓'},
+					{'value': 'MD','text': '门店'}, 
+				];
+				this.storeHousePicker.setData(storeHouseData);
+				this.initSkuDataCache();
+			},
+			initSkuDataCache: function(){
+				this.skuDataCache = {};
+				for(var f in this.constants){
+					this.skuDataCache[this.constants[f]] = {};
+				}
+			}, 
+			bindEvent: function(){
+				var me = this;
+				window.addEventListener('inputEleFocus',function(){
+					me.inputEleFocus();
+				});
+				document.addEventListener('keyup',function(evt){
+					if(me.isEnterKey(evt) && evt.srcElement.id != 'message_input'){
+							//	判断是否是深圳仓取货上架
+							var type = me.getCurrentActiveType();
+							if(type==me.constants.SZPICKUP){
+								me.doInputBusiness(false,true,true);								
+							}else{
+								me.doInputBusiness(false,true);
+							};
+					}else{
+						evt.stopPropagation();
+						evt.preventDefault();
+					}
+				});
+				mui.each(me.msgInputEles,function(){
+					this.addEventListener('keyup',function(evt){
+						if(me.isEnterKey(evt)){
+							//	判断是否是深圳仓取货上架
+							var type = me.getCurrentActiveType();
+							if(type==me.constants.SZPICKUP){
+								me.doInputBusiness(false,true,true);		
+							}else{
+								me.doInputBusiness(true,true);
+							};
+							
+						}else{
+							evt.stopPropagation();
+							evt.preventDefault();
+						}
+					});
+				});
+				me.sendBtnEle.addEventListener('tap',function(evt){
+					me.doSendBusiness();
+				});
+				me.resetBtnEle.addEventListener('tap',function(evt){
+					me.resetSendInfo(true);
+				});
+				mui.each(me.storeHousePickerBtns,function(){
+					this.addEventListener('tap',function(evt){
+						var t = this;
+						me.storeHousePicker.show(function(items) {
+							t.setAttribute('storeHouse',items[0].value);
+							t.innerText = items[0].text;
+						});	
+					},false);
+				});
+				mui.each(me.storeHouseDropIcons,function(){
+					this.addEventListener('tap',function(evt){
+	//					mui.trigger(me.storeHousePickerBtn,'tap');
+						mui.trigger(this.parentNode.querySelector('button'),'tap');
+					},false);
+				});
+				mui.each(me.qtyEles,function(){
+					this.addEventListener('tap',function(evt){
+						me.doGetNumberInfo(true);
+					},false);
+				});
+				// 拆分货架
+				mui.each(me.splitBtnEles,function(){
+					this.addEventListener('tap',function(evt){
+						me.addShelftNum();
+					});
+				});
+				//上架选择卡 切换事件
+				document.getElementById('slider').addEventListener('slide', function(e) {
+					//	判断是否是收货上架，并且是深圳仓
+					var type = me.getCurrentActiveType(),
+						params=me.getSendParams()||{},
+						params={'warehouse':params['warehouse'],'username':params['userName']};
+					if(type==me.constants.SZPICKUP){
+//						alert(JSON.stringify(nparams));
+//						return false;
+						me.getPickedUnOnShelf(params)
+					}
+				});	
+				document.getElementById('tpReload').addEventListener('tap', function(e) {
+					//	判断是否是收货上架，并且是深圳仓
+					var type = me.getCurrentActiveType(),
+						params=me.getSendParams()||{},
+						params={'warehouse':params['warehouse'],'username':params['userName']};
+						me.getPickedUnOnShelf(params);
+				})
+				
+			},
+			getElementBySelector: function(selector){
+				var container = this.getCurrentActiveContainer();
+				return container ? container.querySelector(selector) : null;
+			},
+			getCurrentActiveContainer: function(){
+				return document.querySelector('.mui-control-content.mui-active');
+			},
+			getCurrentActiveType: function(){
+				var ele = this.getCurrentActiveContainer(),
+					type = ele ? ele.getAttribute('type') : '';
+				return this.constants[type] || '';	
+			},
+			// 输入处理
+			doInputBusiness: function(auoSubmit,isDocEvent,onlyShowShelf){
+				var me = this,
+					msgInputEle = me.getElementBySelector(me.eles.msgInputEle),
+					inputVal = msgInputEle.value ? msgInputEle.value.trim() : '',
+					inputVal = inputVal.replace(/(\\n+|\\r)+/,'');
+				msgInputEle.select();
+				me.showMessage('','clear');
+				if((inputVal == null || inputVal == '') && !isDocEvent){
+//				if((inputVal == null || inputVal == '') && !isDocEvent){
+//					me.resetInputInfo();
+					me.selectInputInfo();
+					msgInputEle.value = '';
+					me.showMessage('请输入有效的信息','error');
+					return false;
+				};
+				if(me.skuReg.test(inputVal)){           // SKU
+//					me.skuEle.innerText = inputVal;
+					me.getElementBySelector(me.eles.skuEle).innerText = inputVal;
+					me.skuDataCache[me.getCurrentActiveType()][inputVal] = false;
+					if(auoSubmit){
+						me.doGetNumberInfo(true);           // 请求后台查询数量和货架位
+					}
+					if(onlyShowShelf){
+						me.getShelfNumInfo(inputVal);           // 请求后台查询数量和货架位
+					}
+					
+				}else if(me.getElementBySelector(me.eles.shelfNumEle)&&me.shelfNumReg.test(inputVal) && isDocEvent){// 货架号
+//					me.shelfNumEle.innerText = inputVal;
+					me.getElementBySelector(me.eles.shelfNumEle).innerText = inputVal;
+				}else{
+					me.showMessage('请输入有效的信息','error');
+					return false;
+				}
+				if(isDocEvent){
+//					me.commitShelvesData(auoSubmit); // 不需要自动提交数据
+				}
+			},
+			commitShelvesData: function(auoSubmit){
+				var me = this,params = me.getSendParams();
+				if(auoSubmit && me.skuReg.test(params.sku) && me.qtyReg.test(params.count) 
+					&& me.shelfNumReg.test(params.trackingNum) 
+					&& me.skuDataCache[me.getCurrentActiveType()][params.sku]){
+					me.doSendBusiness();
+				}
+			},
+			// 重置发送信息
+			resetSendInfo: function(forceFocus){
+				var me = this;
+				me.getElementBySelector(me.eles.skuEle).innerHTML = '';					
+				if(me.getElementBySelector(me.eles.shelfNumEle)){
+					me.getElementBySelector(me.eles.shelfNumEle).innerHTML = '';
+				};
+				if(me.getElementBySelector(me.eles.qtyEle)){
+					me.getElementBySelector(me.eles.qtyEle).innerHTML = '';
+					me.getElementBySelector(me.eles.qtyEle).setAttribute('qty-data','');	
+				};							
+				me.toggleSelectQtyInfo('','hide');
+				me.skuDataCache[me.getCurrentActiveType()] = {};
+				me.resetInputInfo(forceFocus);				
+				me.showMessage('','clear');				
+				me.toggleOriginShelftNumInfo('','hide');				 
+				me.resetAddShelftNumRowEle();
+			},
+			// 重置输入信息
+			resetInputInfo: function(forceFocus){
+				this.selectInputInfo();
+				var msgInputEle = this.getElementBySelector(this.eles.msgInputEle);
+				if(forceFocus){
+					msgInputEle.value = '';
+//					this.setShowSoftInput(this.msgInputEle);
+					msgInputEle.focus();
+				}
+			},
+			selectInputInfo: function(){
+//				this.msgInputEle.select();
+				this.getElementBySelector(this.eles.msgInputEle).select();
+			},
+			// 获取请求参数
+			getSendParams: function(){
+				var me = this,
+					type = me.getCurrentActiveType(),
+					user = App.getUserInfo() || {},params = {},
+					shelfNumEle = me.getElementBySelector(me.eles.shelfNumEle),
+					skuEle = me.getElementBySelector(me.eles.skuEle),
+					qtyEle = me.getElementBySelector(me.eles.qtyEle),
+					storeHousePickerBtn = me.getElementBySelector(me.eles.storeHousePickerBtn);
+				params.userName = user.nickName || ''; // 用户名
+				if(type == me.constants.SZPICKUP){
+					params.warehouse = storeHousePickerBtn.getAttribute('storeHouse') || ''; // 仓库
+					params.warehouseText = storeHousePickerBtn.innerText || '';
+					params.sku = skuEle.innerText ? skuEle.innerText.trim() : '';            // SKU
+					params.trackingNum = shelfNumEle.innerText ? shelfNumEle.innerText.trim() : ''; // 货架号
+				}else{																												
+					if (typeof(shelfNumEle)== "undefined" || shelfNumEle == null){//取货上架不需要货架号			
+					}else{
+						params.trackingNum = shelfNumEle.innerText ? shelfNumEle.innerText.trim() : ''; // 货架号
+					};
+	//				params.trackingNum = shelfNumEle.innerText ? shelfNumEle.innerText.trim() : ''; // 货架号 				
+					params.sku = skuEle.innerText ? skuEle.innerText.trim() : '';            // SKU
+	//				params.count = qtyEle.innerText ? qtyEle.innerText.trim() : '';          // 数量
+	//				params.stockid = qtyEle.getAttribute(me.getQtyEleHideAttrName()) || '';  // 数量对应的ID
+	//				params.returnid = qtyEle.getAttribute(me.getQtyEleHideAttrName()) || ''; // 退货单ID
+					params.count = qtyEle.getAttribute('qty-data') || '';                    // 数量ID与数量的对应关系，如：100122:88,10021:99
+					params.totalCount = qtyEle.innerText ? qtyEle.innerText.trim() : '';     // 总数量 
+					params.warehouse = storeHousePickerBtn.getAttribute('storeHouse') || ''; // 仓库
+					params.warehouseText = storeHousePickerBtn.innerText || '';
+					var ids = [],qtys = [];
+					if(params.count){
+						var arr = params.count.split(','),arr2;
+						for(var i=0,len=arr.length;i<len;i++){
+							arr2 = arr[i].split(':');
+							ids.push(arr2[0]);
+							qtys.push(arr2[1]);
+						}
+					}
+					params.stockid = params.stock_ids= params.returnid = ids.join(',');
+					params.count = qtys.join(',');
+				};	
+					
+				return params;
+			},
+			// 发送上架信息
+			doSendBusiness: function(type){
+				// 发送前先处理输入信息
+				this.doInputBusiness(false);
+				var me = this,
+					url = '',
+					type = me.getCurrentActiveType(),
+					params = me.getSendParams();
+				// 验证输入信息
+				if(!this.validateSendData(type)){
+					return false;
+				}		
+				if(me.isSplitBusiness()){   // 如果是拆分货架业务
+					var rows = me.getAddShelftNumData() || [],nums = [],counts = [];
+					for(var i=0;i<rows.length;i++){
+						nums.push(rows[i].shelfNumber);
+						counts.push(rows[i].count);
+					}
+					params.trackingNum = nums.join(',');  // trackingNum参数覆盖
+					params.count = counts.join(',');      // count参数覆盖 
+				}else{
+					params.count = params.totalCount;
+				}
+					
+				var msg = '仓库:' + params.warehouseText + ',货架号:' + params.trackingNum 
+						+ ',SKU:' + params.sku + (params.count?+',数量:'+params.count:''),
+					dialogMsg = '货架号:' + params.trackingNum + '\n' 
+						+ 'S  K  U:' + params.sku + '\n' + '数    量:' + params.count,
+					typeTxt='上架';
+				if(type == me.constants.PICKUP){
+					url = '/track/set_sku_for_onshelf';	
+					msg = '仓库:' + params.warehouse + ',SKU:' + params.sku;
+					dialogMsg =  'S  K  U:' + params.sku ;
+					typeTxt='取货';
+					params={'stock_ids':params['stock_ids'],'warehouse':params['warehouse'],'username':params['userName']};				
+				}else if(type == me.constants.PURCHASE){
+					url = '/track/putaway';
+				}else if(type == me.constants.RETURNS){
+					url = '/track/returnitem';
+				}else if(type == me.constants.SZPICKUP){//http://192.168.15.230:9680/track/putaway_sz?sku=10020000&warehouse=SZ&userName=abc&trackingNum=A101-1
+					url = '/track/putaway_sz';
+//					alert('确认取货上架:'+JSON.stringify(params));
+//					return false;
+				}						
+				// 提交数据		
+				mui.doGet(App.createUrl(url),params,function(result){
+					result = result || {};	
+					if(result.errcode == '0'){
+						me.resetSendInfo(); // 重置信息				
+				        me.showMessage(msg + '<br/>'+typeTxt+'成功','success');	
+				        if(type == me.constants.SZPICKUP){
+							params={'warehouse':params['warehouse'],'username':params['userName']};
+							me.getPickedUnOnShelf(params);
+				        };				        
+					}else{
+						me.showMessage(msg + '<br/>'+typeTxt+'失败' + (result.errmsg ? (',' + result.errmsg) : ''),'error');
+					}
+				},function(xhr,a,b,c){
+					var errMsg = me.getServerErrorMsg(xhr);
+					me.showMessage(msg + '<br/>'+typeTxt+'失败' + (errMsg ? (',' + errMsg) : ''),'error');
+				},{'beforeSend': function(){ 
+					me.showMessage( typeTxt+'中...');  
+				},'complete': function(result){
+//					me.msgInputEle.select();
+					me.getElementBySelector(me.eles.msgInputEle).select();
+				}});
+			},
+			doGetNumberInfo: function(showLoading){
+				var me = this,
+					type = me.getCurrentActiveType(),
+					url = '',
+					params = me.getSendParams(),msg = '根据SKU:' + params.sku + ' 获取数量失败';
+				if(type == me.constants.PICKUP||type == me.constants.SZPICKUP){
+					url = '/track/get_sku_for_onshelf';
+				}else if(type == me.constants.PURCHASE){
+					url = '/track/scan_sku';
+				}else if(type == me.constants.RETURNS){
+					url = '/track/getReturnItem';
+				}
+				if(!params.sku){ 
+					me.showMessage('请先输入SKU','error');
+					me.selectInputInfo();
+					return false;
+				}
+				mui.doGet(App.createUrl(url),{'sku': params.sku,'warehouse': params.warehouse},function(result){
+					result = result || {};				
+					if(result && result.errcode == '0'){											
+						if(type == me.constants.PICKUP){
+//                  		取货上架-测试数据					
+//							result['data']=[
+//						 		{"id":"531281","order_code":"152145655440416891","sku":"10039265","okCount":"10"},
+//						 		{"id":"531282","order_code":"152145655440416892","sku":"10039265","okCount":"20"},
+//								{"id":"531283","order_code":"152145655440416890","sku":"10039265","okCount":"2"},
+//								{"id":"531284","order_code":"152145655440416893","sku":"10039265","okCount":"30"}
+//							 ];		
+							if(result['data'].length==0){
+								me.showMessage(msg,'error');
+								return false;
+							};
+							 var res=result.data,tts={};							 
+							 for(var i=0;i<res.length;i++){
+							 	tts[res[i]['id']]=res[i]['okCount'];
+							 };
+							 result['data']['counts']=tts;
+							 result['data']['warehouse']=res[0]['ws_code']
+						}else{
+							result=result;	
+						};					
+						me.showMessage('','clear');
+						me.alfterGetNumberInfo(result,params.sku);
+					}else{
+						me.alfterGetNumberInfo(result,params.sku);
+						me.showMessage(msg + (result.errmsg ? (',' + result.errmsg) : ''),'error');
+					}
+				},function(xhr){
+				 	var errMsg = me.getServerErrorMsg(xhr);
+					me.showMessage(msg + (errMsg ? (',' + errMsg) : ''),'error');
+				},{'beforeSend': function(){
+					me.toggleOriginShelftNumInfo('','hide');
+					if(me.getElementBySelector(me.eles.selectQtyWrapperEle)){
+						me.toggleSelectQtyInfo('','hide');
+						me.resetSelelctQtyWrapperStyle('','none');      // 重置内容	
+						me.setQtyInfo({'title':'','value':''},me.getCurrentSKU(),true); // 重置数量
+					}
+					if(showLoading){
+						me.showMessage('正在获取数据...');  
+					}
+				},'complete': function(){
+//					me.msgInputEle.select(); 
+					me.getElementBySelector(me.eles.msgInputEle).select();
+				}});
+			},
+			alfterGetNumberInfo: function(result,sku){
+				var nums = result.data ? result.data.counts || [] : [],
+					warehouse = result.data ? result.data.warehouse || '' : '';
+					this.toggleOriginShelftNumInfo(warehouse,'show');	
+				if(nums){
+					this.openShelftNumModal(nums,sku);
+				}else{
+					this.showMessage('根据SKU获取数量信息失败','error');
+				}
+			},
+			getShelfNumInfo: function(sku){
+				var me = this,
+					type = me.getCurrentActiveType(),
+					params=me.getSendParams()||{},
+					params={'warehouse':params['warehouse'],'username':params['userName']};
+				me.toggleOriginShelftNumInfo('','hide');	
+				me.getPickedUnOnShelf(params,sku);
+			},
+			toggleOriginShelftNumInfo: function(msg,type){
+				var wrapper = this.getElementBySelector(this.eles.originShelfNumEleWrapperEle),
+					ele = wrapper ? wrapper.querySelector(this.eles.originShelfNumberEle) : null;
+				wrapper ? (wrapper.style.display = type == 'show' ? 'block' : 'none') : '';
+				ele ? (ele.innerText = msg) : '';
+			},
+			toggleSelectQtyInfo: function(msg,type){
+				var wrapper = this.getElementBySelector(this.eles.selectQtyWrapperEle),
+					ele = wrapper ? wrapper.querySelector(this.eles.selectQtyContentEle) : null;
+				wrapper ? (wrapper.style.display = type == 'show' ? 'block' : 'none') : '';
+				ele ? (ele.innerText = msg) : '';
+			},
+			openShelftNumModal: function(nums,sku){
+//				nums = {'10001':99,'10002':887,'10003': 999,'10004':100}; // 测试数据
+				var me = this,bts = [],bt;
+				for(var field in nums){ 
+					bts.push({'title':nums[field],'value':field,'color':'#19bcff'});
+				}
+				if(!bts || !bts.length){
+					return;
+				}
+				if(bts && bts.length == 1){ // 如果只有一个，则直接显示出来，不用选择
+					bts[0].value = bts[0].value + ':' + bts[0].title;
+					me.setQtyInfo(bts[0],sku);
+					return ;
+				}
+				me.createQtySelectEles(bts); // 创建数量选择元素
+//				plus.nativeUI.actionSheet({title:"请选择数量",cancel:"取消",buttons:bts},
+//					function(e){ 
+//						if(e.index > 0){
+//							bt = bts[e.index-1];
+//							me.setQtyInfo(bt,sku);
+//						}
+//					}
+//				);
+			}, 
+			createQtySelectEles: function(rows){
+				rows = rows || [];
+				var me = this,wrapper = this.getElementBySelector(this.eles.selectQtyWrapperEle),
+					content = wrapper.querySelector(this.eles.selectQtyContentEle),
+					type =  this.getCurrentActiveType(),
+					rowCls = 'mui-input-row mui-checkbox box-item mui-left',
+					row,label,inp,data;
+				this.resetSelelctQtyWrapperStyle('','block'); // 重置内容	
+				row = document.createElement('div');
+				row.className = 'mui-input-row mui-checkbox mui-left select-all'; 
+//				row.innerHTML = '数量:'; // 第一个
+				inp = document.createElement('input');
+				inp.setAttribute('type','checkbox');
+				label = document.createElement('label');
+				label.innerHTML = '数量'; 
+				row.appendChild(inp);
+				row.appendChild(label);
+				content.appendChild(row);
+				// 绑定全选事件
+				inp.addEventListener('change',function(evt){
+					me.onSelectAllQtyEleChange(this);
+				},false);
+				for(var i=0,len = rows.length;i<len;i++){
+					data = rows[i];
+					row = document.createElement('div');
+					row.className = rowCls;
+					label = document.createElement('label');
+					label.innerText = data.title || '';
+					inp = document.createElement('input');
+					inp.setAttribute('type','checkbox');
+					inp.setAttribute('text',data.title);
+					inp.value = data.value || '';
+					row.appendChild(label);
+					row.appendChild(inp);
+					content.appendChild(row);
+					// 绑定事件
+					inp.addEventListener('change',function(evt){
+						me.onSelectQtyEleChange(this);
+					},false);
+				}
+				wrapper.style.display = 'block';
+			},
+			onSelectAllQtyEleChange: function(ele){
+				var wrapper = this.getElementBySelector(this.eles.selectQtyWrapperEle),
+					content = wrapper.querySelector(this.eles.selectQtyContentEle),
+					inps = content.querySelectorAll('.mui-checkbox.box-item input'),
+					isCheck = ele.checked;
+				if(!inps || !inps.length){
+					return false;
+				}
+				mui.each(inps,function(){
+					this.checked = isCheck;
+					mui.trigger(this,'change');
+				});
+			},
+			onSelectQtyEleChange: function(ele){
+				var wrapper = this.getElementBySelector(this.eles.selectQtyWrapperEle),
+					content = wrapper.querySelector(this.eles.selectQtyContentEle), 
+//					keyName = this.getQtyEleHideAttrName();
+					checkedEles = content.querySelectorAll('.mui-checkbox.box-item input:checked'),
+					sku = this.getCurrentSKU(),
+					rows = [],row = {},result = {},rowStr = '',sumQty = 0;
+				mui.each(checkedEles,function(i,o){ 
+					row.key = this.value;
+					row.value = this.getAttribute('text') || '0';
+					sumQty += parseInt(row.value);
+					rowStr += row.key + ':' + row.value + ','
+					rows.push(row);
+				});
+				rowStr = rowStr ? rowStr.substr(0,rowStr.lastIndexOf(',')) : '';
+				result = {'title': sumQty,'value': rowStr};
+				this.setQtyInfo(result,sku);
+			},
+			getCurrentSKU: function(){
+				return this.getElementBySelector(this.eles.skuEle).innerText || '';
+			},
+			resetSelelctQtyWrapperStyle: function(contentStr,showStyle){
+				var wrapper = this.getElementBySelector(this.eles.selectQtyWrapperEle),
+					content = wrapper.querySelector(this.eles.selectQtyContentEle);
+				content.innerHTML = contentStr || '';
+				wrapper.style.display = showStyle || '';
+			},
+			setQtyInfo: function(row,sku,reset){
+				row = row || {};
+				var qtyEle = this.getElementBySelector(this.eles.qtyEle),
+					type =  this.getCurrentActiveType();
+				if(qtyEle){
+	//				qtyEle.setAttribute(this.getQtyEleHideAttrName(),row.value || ''); 
+					qtyEle.setAttribute('qty-data',row.value || '');
+					qtyEle.innerText = row.title || '';
+					this.skuDataCache[type][sku] = reset ? false : true; // 记录此SKU已经加载成功
+	//				this.commitShelvesData(true);  // 提交数据
+				}
+			},
+			getQtyEleHideAttrName: function(){
+				var type = this.getCurrentActiveType();
+				if(this.constants.PICKUP == type){
+					return 'stock_ids';
+				}else if(this.constants.PURCHASE == type){
+					return 'stockid';
+				}else if(this.constants.RETURNS == type){
+					return 'returnid';
+				}
+				return '';
+			},
+			// 验证上架信息
+			validateSendData: function(type){
+				var me = this,params = me.getSendParams(),msg = '',result = true;
+				if(type==me.constants.PICKUP){
+					if(result && !me.skuReg.test(params.sku)){
+						msg = '无效的SKU';
+						result = false;
+					}
+	//				if(result && !me.qtyReg.test(params.count)){
+					if(result && !params.count){
+						msg = '无效的数量';
+						result = false;
+					}					
+				}else if(type==me.constants.SZPICKUP){
+					if(result && !me.skuReg.test(params.sku)){
+						msg = '无效的SKU';
+						result = false;
+					}
+					if(!me.shelfNumReg.test(params.trackingNum)){
+						msg = '无效的货架号';
+						result = false;
+					};				
+				}else{
+					if(!me.shelfNumReg.test(params.trackingNum)){
+						msg = '无效的货架号';
+						result = false;
+					};
+							
+					if(result && !me.skuReg.test(params.sku)){
+						msg = '无效的SKU';
+						result = false;
+					}
+	//				if(result && !me.qtyReg.test(params.count)){
+					if(result && !params.count){
+						msg = '无效的数量';
+						result = false;
+					}
+					
+				}						
+				if(!result){
+					me.showMessage(msg,'error');
+					me.resetInputInfo();
+//					me.setShowSoftInput(me.msgInputEle);
+					return false;
+				}
+				if(!me.validateAddShelftNumData()){
+					me.resetInputInfo();
+					return false;
+				}
+				this.showMessage('','clear');
+				return true;
+			},
+			inputEleFocus: function(eName){
+				var me = this,
+					skuEle = me.getElementBySelector(me.eles.skuEle),
+					msgInputEle = me.getElementBySelector(me.eles.msgInputEle);
+				if(eName == 'sku'){
+//					me.setShowSoftInput(this.skuEle); 
+					skuEle ? skuEle.select() : '';
+				}else{
+//					me.setShowSoftInput(this.msgInputEle);
+					msgInputEle ? msgInputEle.select() : '';
+				}
+			},
+			addShelftNum: function(){
+				var me = this,rowEle,params = me.getSendParams();
+				if(!params || !params.count){
+					me.showMessage('请先选择有效的数量','error');
+					return false;
+				}
+				rowEle = me.createAddShelftNumRowEle();
+				var wrapper = this.getElementBySelector(this.eles.addShelftWrapperEle),
+					content = wrapper.querySelector(this.eles.addShelftContentEle);
+				content.appendChild(rowEle);
+				// 删除行事件
+				rowEle.querySelector('.mui-icon.btn').addEventListener('tap',function(evt){
+					content.removeChild(this.parentNode);
+					me.toggleShleftWrapperStyle();
+				});
+				me.toggleShleftWrapperStyle();
+			},
+			toggleShleftWrapperStyle: function(){
+				var wrapper = this.getElementBySelector(this.eles.addShelftWrapperEle),
+					content = wrapper.querySelector(this.eles.addShelftContentEle),
+					nodes = content.querySelectorAll('div.mui-row');
+				if(!nodes || !nodes.length){
+					wrapper.style.display = 'none';
+				}else{
+					wrapper.style.display = 'block';
+				}
+			},
+			validateAddShelftNumData: function(){
+				var data = this.getAddShelftNumData(),
+					params = this.getSendParams(),
+					total = params && params.totalCount ? Number(params.totalCount) : 0;
+				if(!data || !data.length){
+					return true;
+				}
+				var row,sum = 0,flag = true;
+				for(var i=0;i<data.length;i++){
+					row = data[i];
+					if(!row.shelfNumber){
+						this.showMessage('货架号不能为空','error');
+						flag = false;
+						break;
+					}
+					if(!row.count){
+						this.showMessage('数量不能为空','error');
+						flag = false;
+						break;
+					}
+					if(isNaN(row.count)){
+						this.showMessage('输入的数量不是有效的数字','error');
+						flag = false;
+						break;
+					}
+					sum += Number(row.count);
+				}
+				if(sum > total){
+					this.showMessage('拆分后的数量总数不能大于' + total,'error');
+					flag = false;
+				}
+				return flag;
+			},
+			getAddShelftNumData: function(){
+				var wrapper = this.getElementBySelector(this.eles.addShelftWrapperEle),
+					content = wrapper.querySelector(this.eles.addShelftContentEle),
+					eles = content.querySelectorAll('div.mui-row');
+				if(!eles || !eles.length){
+					return [];
+				} 
+				var rows = [],cols,row,inp;
+				mui.each(eles,function(i,o){
+					row = {};
+					cols = this.querySelectorAll('div.mui-col');
+					mui.each(cols,function(j,oo){
+						inp = this.querySelector('input');
+						row[inp.getAttribute('name')] = inp.value ? inp.value.trim() : '';
+					});
+					rows.push(row);
+				}); 
+				return rows;
+			},
+			isSplitBusiness: function(){
+				var wrapper = this.getElementBySelector(this.eles.addShelftWrapperEle),
+					content = wrapper.querySelector(this.eles.addShelftContentEle),
+					eles = content.querySelectorAll('div.mui-row');
+				return eles && eles.length;
+			},
+			resetAddShelftNumRowEle: function(){
+				var wrapper = this.getElementBySelector(this.eles.addShelftWrapperEle),
+					content = wrapper.querySelector(this.eles.addShelftContentEle);
+				content.innerHTML = '';
+				this.toggleShleftWrapperStyle();
+			},
+			createAddShelftNumRowEle: function(){
+				var row = document.createElement('div'),
+					col1 = document.createElement('div'),
+					col2 = document.createElement('div'),
+					btn = document.createElement('span');
+				row.classList.add('mui-row');
+				col1.classList.add('mui-col','mui-col-sm-5','mui-col-xs-5');
+				col2.classList.add('mui-col','mui-col-sm-5','mui-col-xs-5');
+				btn.classList.add('mui-icon','mui-icon-minus','btn');
+				col1.innerHTML = '<input name="shelfNumber" type="text" class="mui-input-clear" placeholder="输入货架号">';
+				col2.innerHTML = '<input name="count" type="text" class="mui-input-clear" placeholder="输入数量">';
+				row.appendChild(col1);
+				row.appendChild(col2);
+				row.appendChild(btn);
+				return row;
+			},
+			getPickedUnOnShelf:function(params,sku){
+				//深圳取货上架，列出已取货未上架
+				var me=this,
+					type = me.getCurrentActiveType(),
+					url='/track/my_putaway_wait';
+				document.getElementById('unOnShelfList').innerHTML='';
+				// 提交数据									
+				mui.doGet(App.createUrl(url),params,function(result){
+						document.getElementById('unOnShelfList').innerHTML='';
+						document.getElementById('tpMsg').innerHTML='';
+						result = result || {};	
+						if(result.errcode == '0'){
+//							alert(JSON.stringify(result))
+							var list=result.data?result.data:[],
+								listLen=list.length;
+							if(list.length>0){
+								for(var i=0;i<list.length;i++) {
+									if(sku){
+										var shelfInfo;
+										if(sku==list[i]['sku']){
+											shelfInfo=list[i]['Warehouse']?list[i]['Warehouse']:'无';
+											me.toggleOriginShelftNumInfo(shelfInfo,'show');												
+										}else{
+											shelfInfo='根据sku未获取到货架号';
+											me.showMessage(shelfInfo,'error');
+										};									
+									}
+									var li=document.getElementById('unOnShelfListHd').cloneNode(true),									
+										innHtml='<div class="mui-row"><span class="mui-col-sm-4 mui-col-xs-4">'+list[i]['sku']+'</span><span class="mui-col-sm-4 mui-col-xs-4">'+list[i]['Warehouse']+'</span><span class="mui-col-sm-4 mui-col-xs-4">'+list[i]['okCount']+'</span></div>';
+									li.innerHTML=innHtml;
+									document.getElementById('unOnShelfList').appendChild(li)								
+								}
+							}else{
+								var msg='没有已取货未上架信息'
+								document.getElementById('tpMsg').innerHTML=msg;
+							}	
+						}else{
+							var msg=result.errmsg;
+							document.getElementById('tpMsg').innerHTML=msg;
+						}
+					},function(xhr,a,b,c){
+						var errMsg = me.getServerErrorMsg(xhr),
+						    msg=errMsg;
+						document.getElementById('tpMsg').innerHTML=msg;
+					},{'beforeSend': function(){ 
+						var msg='加载中...';
+						document.getElementById('tpMsg').innerHTML=msg;
+					},'complete': function(result){
+	
+					}
+				});
+			},
+		});		
+		mui('.mui-scroll-wrapper').scroll({
+		    deceleration: 0.0005 //flick 减速系数，系数越大，滚动速度越慢，滚动距离越小，默认值0.0006
+		});
+		// h5+环境初始化完成
+		mui.plusReady(function(){			
+			ShelvesMgr.ready();
+		});
+	</script>
+</html>
